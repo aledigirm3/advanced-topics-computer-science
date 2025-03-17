@@ -42,7 +42,7 @@ def get_db_dict(isTrain: bool=True) -> Dict[str, Dict[str, str]]: # -> {database
     print(db_dict.keys())
     
     
-def get_table_from_query(sql_query: str) -> list[str]:
+def get_tables_from_query(sql_query: str) -> list[str]:
     """
     Function to extract table from SQL query.
     
@@ -62,6 +62,4 @@ def get_table_from_query(sql_query: str) -> list[str]:
     tables.update(join_pattern.findall(sql_query))
     
     return list(tables)
-        
-        
     
