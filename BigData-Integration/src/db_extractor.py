@@ -12,7 +12,7 @@ from ansi_colors import *
 ### --------- ###
 
 
-def get_db_from_query(query: str) -> str:
+def get_databases_from_query(query: str) -> str:
 
     """
     Function to extract the top 10 most relevant databases from query.
@@ -87,7 +87,7 @@ if __name__ == '__main__':
             db_id = query_block["db_id"]
             question = query_block["question"]
             sql = query_block["SQL"]
-            response = get_db_from_query(question)
+            response = get_databases_from_query(question)
 
 
             file.write(f"{space}DBid: {db_id}\n")
