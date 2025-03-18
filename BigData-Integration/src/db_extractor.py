@@ -86,11 +86,13 @@ if __name__ == '__main__':
 
             db_id = query_block["db_id"]
             question = query_block["question"]
+            sql = query_block["SQL"]
             response = get_db_from_query(question)
 
 
-            file.write(f"{space}DB ID: {db_id}\n")
-            file.write(f"{space}Domanda: {question}\n")
-            file.write(f"{space}Risposta: {response}\n\n")
+            file.write(f"{space}DBid: {db_id}\n")
+            file.write(f"{space}QUESTION: {question}\n")
+            file.write(f"{space}SQL: {question}\n")
+            file.write(f"{space}llmRESPONSE: {response}\n\n")
 
             file.flush()
