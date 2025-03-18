@@ -12,13 +12,13 @@ import paths
 from ansi_colors import *
 ### --------- ###
 
-def get_db_dict(isTrain: bool=True) -> Dict[str, Dict[str, str]]: # -> {database, {table, [attr1, attr2, ...]}}
+def get_db_dict(isTrain: bool=True) -> Dict[str, Dict[str, list[str]]]: # -> {database, {table, [attr1, attr2, ...]}}
 
     if isTrain:
-        tab = paths.TRAIN + 'train_tables.json'
+        tabs = paths.TRAIN + 'train_tables.json'
     else:
-        tab = paths.DEV + 'dev_tables.json'
-    with open(tab, "r", encoding="utf-8") as f:
+        tabs = paths.DEV + 'dev_tables.json'
+    with open(tabs, "r", encoding="utf-8") as f:
         data = json.load(f)
         
     db_dict = {}
@@ -39,10 +39,10 @@ def get_db_dict(isTrain: bool=True) -> Dict[str, Dict[str, str]]: # -> {database
         db_dict[databaseID] = table_attributes
         
         
-    print(db_dict.keys())
+    return db_dict
     
     
-def get_tables_from_query(sql_query: str) -> list[str]:
+def get_tables_from_SQLquery(sql_query: str) -> list[str]:
     """
     Function to extract table from SQL query.
     
@@ -62,4 +62,8 @@ def get_tables_from_query(sql_query: str) -> list[str]:
     tables.update(join_pattern.findall(sql_query))
     
     return list(tables)
+
+
+if __name__ == '__main__':
+    print(get_db_dict(True).keys())
     
