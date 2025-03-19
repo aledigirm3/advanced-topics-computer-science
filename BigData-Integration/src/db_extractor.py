@@ -83,7 +83,7 @@ if __name__ == '__main__':
             
             if "question_id" in query_block:
                 q_id = query_block["question_id"]
-                file.write(f"{space}DBid: {q_id}\n")
+                file.write(f"{space}Qid: {q_id}\n")
 
             file.write(f"{space}DBid: {db_id}\n")
             file.write(f"{space}QUESTION: {question}\n")
