@@ -66,7 +66,7 @@ if __name__ == '__main__':
     
     filename = "match_databases.txt"
 
-    queries = paths.TRAIN + 'train.json'
+    queries = paths.TRAIN + 'dev.json'
     
     with open(queries, "r", encoding="utf-8") as f:
         data = json.load(f)
