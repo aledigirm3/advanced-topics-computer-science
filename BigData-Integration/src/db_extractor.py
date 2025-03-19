@@ -68,9 +68,9 @@ if __name__ == '__main__':
 
     if not os.path.exists(paths.LLM_RESPONSE):
         os.makedirs(paths.LLM_RESPONSE)
-        print(f"'{paths.LLM_RESPONSE}' created.")
+        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} created.")
     else:
-        print(f"'{paths.LLM_RESPONSE}' already exist.")
+        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} already exist.")
     
     filename = "match_databases.txt"
 
