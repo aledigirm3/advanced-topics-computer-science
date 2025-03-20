@@ -2,7 +2,7 @@ import json
 import os
 import sys
 import re
-from typing import Dict
+from typing import Dict, Tuple
 
 
 ### --------- ###
@@ -12,7 +12,8 @@ import paths
 from ansi_colors import *
 ### --------- ###
 
-def get_db_dict(isTrain: bool=True) -> Dict[str, Dict[str, list[str]]]: # -> {database, {table, [attr1, attr2, ...]}}
+def get_db_dict_mapping(isTrain: bool=True) -> Tuple[Dict[str, Dict[str, str]], Dict[str, Dict[str, str]]]: 
+    # -> ( {database, {table_name_original, table_name}}, {database, {table_name, table_name_original}} )
 
     if isTrain:
         tabs = paths.TRAIN + 'train_tables.json'
@@ -21,25 +22,20 @@ def get_db_dict(isTrain: bool=True) -> Dict[str, Dict[str, list[str]]]: # -> {da
     with open(tabs, "r", encoding="utf-8") as f:
         data = json.load(f)
         
-    db_dict = {}
+    original2name_dict = {}
+    name2original_dict = {}
         
     for db in data:
         
         databaseID = db["db_id"]
-        table_names = db["table_names_original"]
-        column_names = db["column_names"]
+        table_names_original = db["table_names_original"]
+        table_names = db["table_names"]
         
-        table_attributes = {table: [] for table in table_names}
-        
-        for table_index, column_name in column_names:
-            if table_index != -1:
-                table_name = table_names[table_index]
-                table_attributes[table_name].append(column_name)
-        
-        db_dict[databaseID] = table_attributes
+        original2name_dict[databaseID] = dict(zip(table_names_original, table_names))
+        name2original_dict[databaseID] = dict(zip(table_names, table_names_original))
         
         
-    return db_dict
+    return (original2name_dict, name2original_dict)
     
     
 def get_tables_from_SQLquery(sql_query: str) -> list[str]:
@@ -65,5 +61,5 @@ def get_tables_from_SQLquery(sql_query: str) -> list[str]:
 
 
 if __name__ == '__main__':
-    print(get_db_dict(True).keys())
+    print("aaa")
     
