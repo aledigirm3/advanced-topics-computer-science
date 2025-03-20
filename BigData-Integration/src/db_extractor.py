@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
             file.write(f"{space}DBid: {db_id}\n")
             file.write(f"{space}QUESTION: {question}\n")
-            file.write(f"{space}SQL: {question}\n")
+            file.write(f"{space}SQL: {sql}\n")
             file.write(f"{space}llmRESPONSE: {response}\n\n")
 
             file.flush()
