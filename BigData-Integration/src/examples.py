@@ -68,25 +68,25 @@ findDB_example3DEV = dbExtractorExample(
 )
 
 findTables_example1DEV = TablesExtractorExample(
-    query="",
-    database1="",
-    database2="",
-    database3="",
-    answer=""
+    query="Describe the names of neutral alignment superheroes.",
+    database1="superhero: alignment, attribute, colour, gender, publisher, race, superhero, hero attribute, superpower, hero power",
+    database2="student_club: Event, Major, Zip Code, Attendance, Budget, Expense, Income, Member",
+    database3="codebase_community: badges, comments, post History, post Links, posts, tags, users, votes",
+    answer="superhero: hero attribute, attribute"
 )
 
 findTables_example2DEV = TablesExtractorExample(
-    query="",
-    database1="",
-    database2="",
-    database3="",
-    answer=""
+    query="How many bond id have element iodine?",
+    database1="formula_1: circuits, constructors, drivers, seasons, races, constructor results, constructor standings, driver standings, lap times, pit stops, qualifying, status, results",
+    database2="thrombosis_prediction: Examination, Patient, Laboratory",
+    database3="toxicology: atom, bond, connected, molecule",
+    answer="toxicology: atom, molecule"
 )
 
 findTables_example3DEV = TablesExtractorExample(
-    query="",
-    database1="",
-    database2="",
-    database3="",
+    query="Please list the lowest three eligible free rates for students aged 5-17 in continuation schools.",
+    database1="student_club: Event, Major, Zip Code, Attendance, Budget, Expense, Income, Member",
+    database2="california_schools: free and reduced-price meals, sat scores, schools",
+    database3="financial: account, card, client, disposition, district, loan, order, transaction",
     answer=""
 )
