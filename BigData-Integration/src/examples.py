@@ -86,5 +86,5 @@ findTables_example3DEV = TablesExtractorExample(
     database1="student_club: Event, Major, Zip Code, Attendance, Budget, Expense, Income, Member",
     database2="california_schools: free and reduced-price meals, sat scores, schools",
     database3="financial: account, card, client, disposition, district, loan, order, transaction",
-    answer=""
+    answer="california_schools: free and reduced-price meals"
 )
