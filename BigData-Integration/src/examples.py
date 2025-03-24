@@ -24,11 +24,9 @@ class TablesExtractorExample:
         return f"""
         [QUERY]: 
         {self.query}
-        [DATABASE 1]:
+        [DATABASES]:
         {self.database1}
-        [DATABASE 2]:
         {self.database2}
-        [DATABASE 3]:
         {self.database3}
         [ANSWER]: 
         {self.answer}
