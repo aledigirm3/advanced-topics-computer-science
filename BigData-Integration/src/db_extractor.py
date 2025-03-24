@@ -15,7 +15,7 @@ from ansi_colors import *
 def get_databases_from_query(query: str) -> str:
 
     """
-    Function to extract the top 3 most relevant databases from query.
+    Function to extract the top 3 most relevant databases from natural language query.
     
     Args:
         query (str): Natural language query.
