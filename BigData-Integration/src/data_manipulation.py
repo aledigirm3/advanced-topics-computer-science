@@ -50,16 +50,21 @@ def get_tables_from_SQLquery(sql_query: str) -> list[str]:
     """
     
     # Regex
-    table_pattern = re.compile(r'\bFROM\s+(\w+)(?:\s+AS\s+\w+)?', re.IGNORECASE)
-    join_pattern = re.compile(r'\bJOIN\s+(\w+)(?:\s+AS\s+\w+)?', re.IGNORECASE)
+    table_pattern = re.compile(r'\bFROM\s+(`?\w+`?)(?:\s+AS\s+\w+)?', re.IGNORECASE)
+    join_pattern = re.compile(r'\bJOIN\s+(`?\w+`?)(?:\s+AS\s+\w+)?', re.IGNORECASE)
     
     
     tables = set(table_pattern.findall(sql_query))
     tables.update(join_pattern.findall(sql_query))
     
-    return list(tables)
+    # Rimuovi i backtick solo se presenti
+    clean_tables = {table.strip('`') for table in tables}
+    
+    return list(clean_tables)
 
 
 if __name__ == '__main__':
-    print("aaa")
+    
+    query = "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333"
+    print(get_tables_from_SQLquery(query))
     
