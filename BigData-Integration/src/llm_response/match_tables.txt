@@ -1,0 +1,972 @@
+Qid: 0
+DBid: california_schools
+QUESTION: What is the highest eligible free rate for K-12 students in the schools in Alameda County?
+SQL: SELECT `Free Meal Count (K-12)` / `Enrollment (K-12)` FROM frpm WHERE `County Name` = 'Alameda' ORDER BY (CAST(`Free Meal Count (K-12)` AS REAL) / `Enrollment (K-12)`) DESC LIMIT 1
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 1
+DBid: california_schools
+QUESTION: Please list the lowest three eligible free rates for students aged 5-17 in continuation schools.
+SQL: SELECT `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` FROM frpm WHERE `Educational Option Type` = 'Continuation School' AND `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` IS NOT NULL ORDER BY `Free Meal Count (Ages 5-17)` / `Enrollment (Ages 5-17)` ASC LIMIT 3
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 2
+DBid: california_schools
+QUESTION: Please list the zip code of all the charter schools in Fresno County Office of Education.
+SQL: SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`District Name` = 'Fresno County Office of Education' AND T1.`Charter School (Y/N)` = 1
+llmRESPONSE: california_schools: schools
+
+Qid: 3
+DBid: california_schools
+QUESTION: What is the unabbreviated mailing street address of the school with the highest FRPM count for K-12 students?
+SQL: SELECT T2.MailStreet FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.`FRPM Count (K-12)` DESC LIMIT 1
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 4
+DBid: california_schools
+QUESTION: Please list the phone numbers of the direct charter-funded schools that are opened after 2000/1/1.
+SQL: SELECT T2.Phone FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`Charter Funding Type` = 'Directly funded' AND T1.`Charter School (Y/N)` = 1 AND T2.OpenDate > '2000-01-01'
+llmRESPONSE: california_schools: schools
+
+Qid: 5
+DBid: california_schools
+QUESTION: How many schools with an average score in Math greater than 400 in the SAT test are exclusively virtual?
+SQL: SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 6
+DBid: california_schools
+QUESTION: Among the schools with the SAT test takers of over 500, please list the schools that are magnet schools or offer a magnet program.
+SQL: SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 7
+DBid: california_schools
+QUESTION: What is the phone number of the school that has the highest number of test takers with an SAT score of over 1500?
+SQL: SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 8
+DBid: california_schools
+QUESTION: What is the number of SAT test takers of the schools with the highest FRPM count for K-12 students?
+SQL: SELECT NumTstTakr FROM satscores WHERE cds = ( SELECT CDSCode FROM frpm ORDER BY `FRPM Count (K-12)` DESC LIMIT 1 )
+llmRESPONSE: california_schools: free and reduced-price meals, sat scores, schools
+
+Qid: 9
+DBid: california_schools
+QUESTION: Among the schools with the average score in Math over 560 in the SAT test, how many schools are directly charter-funded?
+SQL: SELECT COUNT(T2.`School Code`) FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath > 560 AND T2.`Charter Funding Type` = 'Directly funded'
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 10
+DBid: california_schools
+QUESTION: For the school with the highest average score in Reading in the SAT test, what is its FRPM count for students aged 5-17?
+SQL: SELECT T2.`FRPM Count (Ages 5-17)` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrRead DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, free and reduced-price meals, schools
+
+Qid: 11
+DBid: california_schools
+QUESTION: Please list the codes of the schools with a total enrollment of over 500.
+SQL: SELECT T2.CDSCode FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.`Enrollment (K-12)` + T2.`Enrollment (Ages 5-17)` > 500
+llmRESPONSE: california_schools: schools
+
+Qid: 12
+DBid: california_schools
+QUESTION: Among the schools with an SAT excellence rate of over 0.3, what is the highest eligible free rate for students aged 5-17?
+SQL: SELECT MAX(CAST(T1.`Free Meal Count (Ages 5-17)` AS REAL) / T1.`Enrollment (Ages 5-17)`) FROM frpm AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr > 0.3
+llmRESPONSE: california_schools: free and reduced-price meals, sat scores
+
+Qid: 13
+DBid: california_schools
+QUESTION: Please list the phone numbers of the schools with the top 3 SAT excellence rate.
+SQL: SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr DESC LIMIT 3
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 14
+DBid: california_schools
+QUESTION: List the top five schools, by descending order, from the highest to the lowest, the most number of Enrollment (Ages 5-17). Please give their NCES school identification number.
+SQL: SELECT T1.NCESSchool FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T2.`Enrollment (Ages 5-17)` DESC LIMIT 5
+llmRESPONSE: california_schools: schools
+
+Qid: 15
+DBid: california_schools
+QUESTION: Which active district has the highest average score in Reading?
+SQL: SELECT T1.District FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' ORDER BY T2.AvgScrRead DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 16
+DBid: california_schools
+QUESTION: How many schools in merged Alameda have number of test takers less than 100?
+SQL: SELECT COUNT(T1.CDSCode) FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Merged' AND T2.NumTstTakr < 100 AND T1.County = 'Lake'
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 17
+DBid: california_schools
+QUESTION: Rank schools by their average score in Writing where the score is greater than 499, showing their charter numbers.
+SQL: SELECT CharterNum, AvgScrWrite, RANK() OVER (ORDER BY AvgScrWrite DESC) AS WritingScoreRank FROM schools AS T1  INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T2.AvgScrWrite > 499 AND CharterNum is not null
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 18
+DBid: california_schools
+QUESTION: How many schools in Fresno (directly funded) have number of test takers not more than 250?
+SQL: SELECT COUNT(T1.CDSCode) FROM frpm AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.`Charter Funding Type` = 'Directly funded' AND T1.`County Name` = 'Fresno' AND T2.NumTstTakr <= 250
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 19
+DBid: california_schools
+QUESTION: What is the phone number of the school that has the highest average score in Math?
+SQL: SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY T2.AvgScrMath DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 20
+DBid: california_schools
+QUESTION: How many schools in Amador which the Low Grade is 9 and the High Grade is 12?
+SQL: SELECT COUNT(T1.`School Name`) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Amador' AND T1.`Low Grade` = 9 AND T1.`High Grade` = 12
+llmRESPONSE: california_schools: schools
+
+Qid: 21
+DBid: california_schools
+QUESTION: In Los Angeles how many schools have more than 500 free meals but less than 700 free or reduced price meals for K-12?
+SQL: SELECT COUNT(CDSCode) FROM frpm WHERE `County Name` = 'Los Angeles' AND `Free Meal Count (K-12)` > 500 AND `FRPM Count (K-12)`< 700
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 22
+DBid: california_schools
+QUESTION: Which school in Contra Costa has the highest number of test takers?
+SQL: SELECT sname FROM satscores WHERE cname = 'Contra Costa' AND sname IS NOT NULL ORDER BY NumTstTakr DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 23
+DBid: california_schools
+QUESTION: List the names of schools with more than 30 difference in enrollements between K-12 and ages 5-17? Please also give the full street adress of the schools.
+SQL: SELECT T1.School, T1.Street FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.`Enrollment (K-12)` - T2.`Enrollment (Ages 5-17)` > 30
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 24
+DBid: california_schools
+QUESTION: Give the names of the schools with the percent eligible for free meals in K-12 is more than 0.1 and test takers whose test score is greater than or equal to 1500?
+SQL: SELECT T2.`School Name` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE CAST(T2.`Free Meal Count (K-12)` AS REAL) / T2.`Enrollment (K-12)` > 0.1 AND T1.NumGE1500 > 0
+llmRESPONSE: california_schools: free and reduced-price meals, sat scores, schools
+
+Qid: 25
+DBid: california_schools
+QUESTION: Name schools in Riverside which the average of average math score for SAT is grater than 400, what is the funding type of these schools?
+SQL: SELECT T1.sname, T2.`Charter Funding Type` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE T2.`District Name` LIKE 'Riverside%' GROUP BY T1.sname, T2.`Charter Funding Type` HAVING CAST(SUM(T1.AvgScrMath) AS REAL) / COUNT(T1.cds) > 400
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 26
+DBid: california_schools
+QUESTION: State the names and full communication address of high schools in Monterey which has more than 800 free or reduced price meals for ages 15-17?
+SQL: SELECT T1.`School Name`, T2.Street, T2.City, T2.State, T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Monterey' AND T1.`Free Meal Count (Ages 5-17)` > 800 AND T1.`School Type` = 'High Schools (Public)'
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 27
+DBid: california_schools
+QUESTION: What is the average score in writing for the schools that were opened after 1991 or closed before 2000? List the school names along with the score. Also, list the communication number of the schools if there is any.
+SQL: SELECT T2.School, T1.AvgScrWrite, T2.Phone FROM schools AS T2 LEFT JOIN satscores AS T1 ON T2.CDSCode = T1.cds WHERE strftime('%Y', T2.OpenDate) > '1991' OR strftime('%Y', T2.ClosedDate) < '2000'
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 28
+DBid: california_schools
+QUESTION: Consider the average difference between K-12 enrollment and 15-17 enrollment of schools that are locally funded, list the names and DOC type of schools which has a difference above this average.
+SQL: SELECT T2.School, T2.DOC FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.FundingType = 'Locally funded' AND (T1.`Enrollment (K-12)` - T1.`Enrollment (Ages 5-17)`) > (SELECT AVG(T3.`Enrollment (K-12)` - T3.`Enrollment (Ages 5-17)`) FROM frpm AS T3 INNER JOIN schools AS T4 ON T3.CDSCode = T4.CDSCode WHERE T4.FundingType = 'Locally funded')
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 29
+DBid: california_schools
+QUESTION: When did the first-through-twelfth-grade school with the largest enrollment open?
+SQL: SELECT T2.OpenDate FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T1.`Enrollment (K-12)` DESC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 30
+DBid: california_schools
+QUESTION: Which cities have the top 5 lowest enrollment number for students in grades 1 through 12?
+SQL: SELECT T2.City FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode GROUP BY T2.City ORDER BY SUM(T1.`Enrollment (K-12)`) ASC LIMIT 5
+llmRESPONSE: california_schools: schools
+
+Qid: 31
+DBid: california_schools
+QUESTION: What is the eligible free rate of the 10th and 11th schools with the highest enrolment for students in grades 1 through 12?
+SQL: SELECT CAST(`Free Meal Count (K-12)` AS REAL) / `Enrollment (K-12)` FROM frpm ORDER BY `Enrollment (K-12)` DESC LIMIT 9, 2
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 32
+DBid: california_schools
+QUESTION: What is the eligible free or reduced price meal rate for the top 5 schools in grades 1-12 with the highest free or reduced price meal count of the schools with the ownership code 66?
+SQL: SELECT CAST(T1.`FRPM Count (K-12)` AS REAL) / T1.`Enrollment (K-12)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.SOC = 66 ORDER BY T1.`FRPM Count (K-12)` DESC LIMIT 5
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 33
+DBid: california_schools
+QUESTION: If there are any, what are the websites address of the schools with a free meal count of 1,900-2,000 to students aged 5-17? Include the name of the school.
+SQL: SELECT T2.Website, T1.`School Name` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`Free Meal Count (Ages 5-17)` BETWEEN 1900 AND 2000 AND T2.Website IS NOT NULL
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 34
+DBid: california_schools
+QUESTION: What is the free rate for students between the ages of 5 and 17 at the school run by Kacey Gibson?
+SQL: SELECT CAST(T2.`Free Meal Count (Ages 5-17)` AS REAL) / T2.`Enrollment (Ages 5-17)` FROM schools AS T1 INNER JOIN frpm AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.AdmFName1 = 'Kacey' AND T1.AdmLName1 = 'Gibson'
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 35
+DBid: california_schools
+QUESTION: What is the administrator's email address of the chartered school with the fewest students enrolled in grades 1 through 12?
+SQL: SELECT T2.AdmEmail1 FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`Charter School (Y/N)` = 1 ORDER BY T1.`Enrollment (K-12)` ASC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 36
+DBid: california_schools
+QUESTION: Under whose administration is the school with the highest number of students scoring 1500 or more on the SAT? Indicate their full names.
+SQL: SELECT T2.AdmFName1, T2.AdmLName1, T2.AdmFName2, T2.AdmLName2, T2.AdmFName3, T2.AdmLName3 FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 37
+DBid: california_schools
+QUESTION: What is the complete address of the school with the lowest excellence rate? Indicate the Street, City, Zip and State.
+SQL: SELECT T2.Street, T2.City, T2.State, T2.Zip FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY CAST(T1.NumGE1500 AS REAL) / T1.NumTstTakr ASC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 38
+DBid: california_schools
+QUESTION: What are the webpages for the Los Angeles County school that has between 2,000 and 3,000 test takers?
+SQL: SELECT T2.Website FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.NumTstTakr BETWEEN 2000 AND 3000 AND T2.County = 'Los Angeles'
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 39
+DBid: california_schools
+QUESTION: What is the average number of test takers from Fresno schools that opened between 1/1/1980 and 12/31/1980?
+SQL: SELECT AVG(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE strftime('%Y', T2.OpenDate) = '1980' AND T2.County = 'Fresno'
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 40
+DBid: california_schools
+QUESTION: What is the telephone number for the school with the lowest average score in reading in Fresno Unified?
+SQL: SELECT T2.Phone FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.District = 'Fresno Unified' AND T1.AvgScrRead IS NOT NULL ORDER BY T1.AvgScrRead ASC LIMIT 1
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 41
+DBid: california_schools
+QUESTION: List the names of virtual schools that are among the top 5 in their respective counties based on average reading scores.
+SQL: SELECT School FROM (SELECT T2.School,T1.AvgScrRead, RANK() OVER (PARTITION BY T2.County ORDER BY T1.AvgScrRead DESC) AS rnk FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' ) ranked_schools WHERE rnk <= 5
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 42
+DBid: california_schools
+QUESTION: What is the type of education offered in the school who scored the highest average in Math?
+SQL: SELECT T2.EdOpsName FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrMath DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 43
+DBid: california_schools
+QUESTION: What is the average math score of the school with the lowest average score for all subjects, and in which county is it located?
+SQL: SELECT T1.AvgScrMath, T2.County FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrMath IS NOT NULL ORDER BY T1.AvgScrMath + T1.AvgScrRead + T1.AvgScrWrite ASC LIMIT 1
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 44
+DBid: california_schools
+QUESTION: What is the average writing score of the school who has the highest number of test takers whose total SAT sscores are greater or equal to 1500? Indicate the city to where the school is situated.
+SQL: SELECT T1.AvgScrWrite, T2.City FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 45
+DBid: california_schools
+QUESTION: What is the average writing score of each of the schools managed by Ricci Ulrich? List the schools and the corresponding average writing scores.
+SQL: SELECT T2.School, T1.AvgScrWrite FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.AdmFName1 = 'Ricci' AND T2.AdmLName1 = 'Ulrich'
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 46
+DBid: california_schools
+QUESTION: Which state special schools have the highest number of enrollees from grades 1 through 12?
+SQL: SELECT T2.School FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.DOC = 31 ORDER BY T1.`Enrollment (K-12)` DESC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 47
+DBid: california_schools
+QUESTION: What is the monthly average number of schools that opened in Alameda County under the jurisdiction of the Elementary School District in 1980?
+SQL: SELECT CAST(COUNT(School) AS REAL) / 12 FROM schools WHERE DOC = 52 AND County = 'Alameda' AND strftime('%Y', OpenDate) = '1980'
+llmRESPONSE: california_schools: schools
+
+Qid: 48
+DBid: california_schools
+QUESTION: What is the ratio of merged Unified School District schools in Orange County to merged Elementary School District schools?
+SQL: SELECT CAST(SUM(CASE WHEN DOC = 54 THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN DOC = 52 THEN 1 ELSE 0 END) FROM schools WHERE StatusType = 'Merged' AND County = 'Orange'
+llmRESPONSE: california_schools: schools
+
+Qid: 49
+DBid: california_schools
+QUESTION: Which different county has the most number of closed schools? Please provide the name of each school as well as the closure date.
+SQL: SELECT DISTINCT County, School, ClosedDate FROM schools WHERE County = ( SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1 ) AND StatusType = 'Closed' AND school IS NOT NULL
+llmRESPONSE: california_schools: schools
+
+Qid: 50
+DBid: california_schools
+QUESTION: What is the postal street address for the school with the 7th highest Math average? Indicate the school's name.
+SQL: SELECT T2.MailStreet, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrMath DESC LIMIT 6, 1
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 51
+DBid: california_schools
+QUESTION: In which mailing street address can you find the school that has the lowest average score in reading? Also give the school's name.
+SQL: SELECT T2.MailStreet, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.AvgScrRead IS NOT NULL ORDER BY T1.AvgScrRead ASC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 52
+DBid: california_schools
+QUESTION: What is the total number of schools whose total SAT scores are greater or equal to 1500 whose mailing city is Lakeport?
+SQL: SELECT COUNT(T1.cds) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Lakeport' AND (T1.AvgScrRead + T1.AvgScrMath + T1.AvgScrWrite) >= 1500
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 53
+DBid: california_schools
+QUESTION: How many test takers are there at the school/s whose mailing city address is in Fresno?
+SQL: SELECT T1.NumTstTakr FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Fresno'
+llmRESPONSE: california_schools: schools, sat scores
+
+Qid: 54
+DBid: california_schools
+QUESTION: Please specify all of the schools and their related mailing zip codes that are under Avetik Atoian's administration.
+SQL: SELECT School, MailZip FROM schools WHERE AdmFName1 = 'Avetik' AND AdmLName1 = 'Atoian'
+llmRESPONSE: california_schools: schools
+
+Qid: 55
+DBid: california_schools
+QUESTION: Of the schools with a mailing state address in California, what is the ratio of the schools located in the county of Colusa against the school located in the county of Humboldt?
+SQL: SELECT CAST(SUM(CASE WHEN County = 'Colusa' THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN County = 'Humboldt' THEN 1 ELSE 0 END) FROM schools WHERE MailState = 'CA'
+llmRESPONSE: california_schools: schools
+
+Qid: 56
+DBid: california_schools
+QUESTION: Of all the schools with a mailing state address in California, how many are active in San Joaquin city?
+SQL: SELECT COUNT(CDSCode) FROM schools WHERE City = 'San Joaquin' AND MailState = 'CA' AND StatusType = 'Active'
+llmRESPONSE: california_schools: schools
+
+Qid: 57
+DBid: california_schools
+QUESTION: What is the phone number and extension number for the school that had the 333rd highest average writing score?
+SQL: SELECT T2.Phone, T2.Ext FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.AvgScrWrite DESC LIMIT 332, 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 58
+DBid: california_schools
+QUESTION: What is the phone number and extension number for the school with the zip code 95203-3704? Indicate the school's name.
+SQL: SELECT Phone, Ext, School FROM schools WHERE Zip = '95203-3704'
+llmRESPONSE: california_schools: schools
+
+Qid: 59
+DBid: california_schools
+QUESTION: What is the website for the schools under the administrations of Mike Larson and Dante Alvarez?
+SQL: SELECT Website FROM schools WHERE (AdmFName1 = 'Mike' AND AdmLName1 = 'Larson') OR (AdmFName1 = 'Dante' AND AdmLName1 = 'Alvarez')
+llmRESPONSE: california_schools: schools
+
+Qid: 60
+DBid: california_schools
+QUESTION: What are the websites for all the partially virtual chartered schools located in San Joaquin?
+SQL: SELECT Website FROM schools WHERE County = 'San Joaquin' AND Virtual = 'P' AND Charter = 1
+llmRESPONSE: california_schools: schools
+
+Qid: 61
+DBid: california_schools
+QUESTION: How many chartered schools located in the city of Hickman are owned by the Elementary School District?
+SQL: SELECT COUNT(School) FROM schools WHERE DOC = 52 AND Charter = 1 AND City = 'Hickman'
+llmRESPONSE: california_schools: schools
+
+Qid: 62
+DBid: california_schools
+QUESTION: What is the total number of non-chartered schools in the county of Los Angeles with a percent (%) of eligible free meals for grades 1 through 12 that is less than 0.18%?
+SQL: SELECT COUNT(T2.School) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Los Angeles' AND T2.Charter = 0 AND CAST(T1.`Free Meal Count (K-12)` AS REAL) * 100 / T1.`Enrollment (K-12)` < 0.18
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 63
+DBid: california_schools
+QUESTION: In chartered schools with charter number 00D2, what are the names of all the administrators? Include the name of the school and the city to which it belongs
+SQL: SELECT AdmFName1, AdmLName1, School, City FROM schools WHERE Charter = 1 AND CharterNum = '00D2'
+llmRESPONSE: california_schools: schools
+
+Qid: 64
+DBid: california_schools
+QUESTION: What is the total number of schools with a mailing city in Hickman belonging to the charter number 00D4?
+SQL: SELECT COUNT(*) FROM schools WHERE CharterNum = '00D4' AND MailCity = 'Hickman'
+llmRESPONSE: california_schools: schools
+
+Qid: 65
+DBid: california_schools
+QUESTION: What is the ratio in percentage of Santa Clara County schools that are locally funded compared to all other types of charter school funding?
+SQL: SELECT CAST(SUM(CASE WHEN FundingType = 'Locally funded' THEN 1 ELSE 0 END) AS REAL) * 100 / SUM(CASE WHEN FundingType != 'Locally funded' THEN 1 ELSE 0 END) FROM schools WHERE County = 'Santa Clara' AND Charter = 1
+llmRESPONSE: california_schools: schools
+
+Qid: 66
+DBid: california_schools
+QUESTION: Between 1/1/2000 to 12/31/2005, how many directly funded schools opened in the county of Stanislaus?
+SQL: SELECT COUNT(School) FROM schools WHERE strftime('%Y', OpenDate) BETWEEN '2000' AND '2005' AND County = 'Stanislaus' AND FundingType = 'Directly funded'
+llmRESPONSE: california_schools: schools
+
+Qid: 67
+DBid: california_schools
+QUESTION: What is the total amount of Community College District closure in 1989 in the city of San Francisco?
+SQL: SELECT COUNT(School) FROM schools WHERE strftime('%Y', ClosedDate) = '1989' AND City = 'San Francisco' AND DOCType = 'Community College District'
+llmRESPONSE: financial: district
+
+Qid: 68
+DBid: california_schools
+QUESTION: Which county reported the most number of school closure in the 1980s with school wonership code belonging to Youth Authority Facilities (CEA)?
+SQL: SELECT County FROM schools WHERE strftime('%Y', ClosedDate) BETWEEN '1980' AND '1989' AND StatusType = 'Closed' AND SOC = 11 GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 69
+DBid: california_schools
+QUESTION: Please provide the National Center for Educational Statistics school district identification number for all schools with a School Ownership Code that are part of the State Special Schools.
+SQL: SELECT NCESDist FROM schools WHERE SOC = 31
+llmRESPONSE: california_schools: schools
+
+Qid: 70
+DBid: california_schools
+QUESTION: How many active and closed District Community Day Schools are there in the county of Alpine?
+SQL: SELECT COUNT(School) FROM schools WHERE (StatusType = 'Closed' OR StatusType = 'Active') AND SOC = 69 AND County = 'Alpine'
+llmRESPONSE: california_schools: schools
+
+Qid: 71
+DBid: california_schools
+QUESTION: What is the district code for the School that does not offer a magnet program in the city of Fresno?
+SQL: SELECT T1.`District Code` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.City = 'Fresno' AND T2.Magnet = 0
+llmRESPONSE: california_schools: schools
+
+Qid: 72
+DBid: california_schools
+QUESTION: How many students from the ages of 5 to 17 are enrolled at the State Special School school in Fremont for the 2014-2015 academic year?
+SQL: SELECT T1.`Enrollment (Ages 5-17)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.EdOpsCode = 'SSS' AND T2.City = 'Fremont' AND T1.`Academic Year` BETWEEN 2014 AND 2015
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 73
+DBid: california_schools
+QUESTION: What is the free or reduced price meal count for ages 5 to 17 in the Youth Authority School with a mailing street address of PO Box 1040?
+SQL: SELECT T1.`FRPM Count (Ages 5-17)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.MailStreet = 'PO Box 1040' AND T2.SOCType = 'Youth Authority Facilities'
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 74
+DBid: california_schools
+QUESTION: What is the lowest grade for the District Special Education Consortia School with National Center for Educational Statistics school district identification number of 0613360?
+SQL: SELECT MIN(T1.`Low Grade`) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.NCESDist = '0613360' AND T2.EdOpsCode = 'SPECON'
+llmRESPONSE: california_schools: schools
+
+Qid: 75
+DBid: california_schools
+QUESTION: What is the educational level name for the schools with Breakfast Provision 2 in county code 37? Indicate the name of the school.
+SQL: SELECT T2.EILName, T2.School FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`NSLP Provision Status` = 'Breakfast Provision 2' AND T1.`County Code` = 37
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 76
+DBid: california_schools
+QUESTION: What is the city location of the high school level school with Lunch Provision 2 whose lowest grade is 9 and the highest grade is 12 in the county of Merced?
+SQL: SELECT T2.City FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`NSLP Provision Status` = 'Lunch Provision 2' AND T2.County = 'Merced' AND T1.`Low Grade` = 9 AND T1.`High Grade` = 12 AND T2.EILCode = 'HS'
+llmRESPONSE: california_schools: schools
+
+Qid: 77
+DBid: california_schools
+QUESTION: Which schools served a grade span of Kindergarten to 9th grade in the county of Los Angeles and what is its Percent (%) Eligible FRPM (Ages 5-17)?
+SQL: SELECT T2.School, T1.`FRPM Count (Ages 5-17)` * 100 / T1.`Enrollment (Ages 5-17)` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'Los Angeles' AND T2.GSserved = 'K-9'
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 78
+DBid: california_schools
+QUESTION: What is the most common type of grade span served in the city of Adelanto?
+SQL: SELECT GSserved FROM schools WHERE City = 'Adelanto' GROUP BY GSserved ORDER BY COUNT(GSserved) DESC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 79
+DBid: california_schools
+QUESTION: Between San Diego and Santa Barbara, which county offers the most number of schools that does not offer physical building? Indicate the amount.
+SQL: SELECT County, COUNT(Virtual) FROM schools WHERE (County = 'San Diego' OR County = 'Santa Barbara') AND Virtual = 'F' GROUP BY County ORDER BY COUNT(Virtual) DESC LIMIT 1
+llmRESPONSE: california_schools: schools, free and reduced-price meals
+
+Qid: 80
+DBid: california_schools
+QUESTION: What is the school type of the school with the highest latitude? Indicate the name of the school as well as the latitude coordinates.
+SQL: SELECT T1.`School Type`, T1.`School Name`, T2.Latitude FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T2.Latitude DESC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 81
+DBid: california_schools
+QUESTION: In which city can you find the school in the state of California with the lowest latitude coordinates and what is its lowest grade? Indicate the school name.
+SQL: SELECT T2.City, T1.`Low Grade`, T1.`School Name` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.State = 'CA' ORDER BY T2.Latitude ASC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 82
+DBid: california_schools
+QUESTION: What is the grade span offered in the school with the highest longitude?
+SQL: SELECT GSoffered FROM schools ORDER BY ABS(longitude) DESC LIMIT 1
+llmRESPONSE: california_schools: schools
+
+Qid: 83
+DBid: california_schools
+QUESTION: Of the schools that offers a magnet program serving a grade span of Kindergarten to 8th grade, how many offers Multiple Provision Types? List the number of cities that offers a Kindergarten to 8th grade span and indicate how many schools are there serving such grade span for each city.
+SQL: SELECT T2.City, COUNT(T2.CDSCode) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.Magnet = 1 AND T2.GSoffered = 'K-8' AND T1.`NSLP Provision Status` = 'Multiple Provision Types' GROUP BY T2.City
+llmRESPONSE: california_schools: schools
+
+Qid: 84
+DBid: california_schools
+QUESTION: What are the two most common first names among the school administrators? Indicate the district to which they administer.
+SQL: SELECT DISTINCT T1.AdmFName1, T1.District FROM schools AS T1 INNER JOIN ( SELECT admfname1 FROM schools GROUP BY admfname1 ORDER BY COUNT(admfname1) DESC LIMIT 2 ) AS T2 ON T1.AdmFName1 = T2.admfname1
+llmRESPONSE: california_schools: schools
+
+Qid: 85
+DBid: california_schools
+QUESTION: What is the Percent (%) Eligible Free (K-12) in the school administered by an administrator whose first name is Alusine. List the district code of the school.
+SQL: SELECT T1.`Free Meal Count (K-12)` * 100 / T1.`Enrollment (K-12)`, T1.`District Code` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.AdmFName1 = 'Alusine'
+llmRESPONSE: california_schools: free and reduced-price meals, schools
+
+Qid: 86
+DBid: california_schools
+QUESTION: What is the administrator's last name that oversees the school with Charter number 40? Indicate the district, the county where the school is situated, and the name of the school.
+SQL: SELECT AdmLName1, District, County, School FROM schools WHERE CharterNum = '0040'
+llmRESPONSE: california_schools: schools
+
+Qid: 87
+DBid: california_schools
+QUESTION: What are the valid e-mail addresses of the administrator of the school located in the San Bernardino county, City of San Bernardino City Unified that opened between 1/1/2009 to 12/31/2010 whose school types are public Intermediate/Middle Schools and Unified Schools?
+SQL: SELECT T2.AdmEmail1, T2.AdmEmail2 FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.County = 'San Bernardino' AND T2.City = 'San Bernardino' AND T2.DOC = 54 AND strftime('%Y', T2.OpenDate) BETWEEN '2009' AND '2010' AND T2.SOC = 62
+llmRESPONSE: california_schools: schools
+
+Qid: 88
+DBid: california_schools
+QUESTION: What is the administrator's email address for the school with the highest number of test takers who received SAT scores of at least 1500?Provide the name of the school.
+SQL: SELECT T2.AdmEmail1, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1
+llmRESPONSE: california_schools: sat scores, schools
+
+Qid: 89
+DBid: financial
+QUESTION: How many accounts who choose issuance after transaction are staying in East Bohemia region?
+SQL: SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'east Bohemia' AND T2.frequency = 'POPLATEK PO OBRATU'
+llmRESPONSE: financial: account, transaction, client, district
+
+Qid: 90
+DBid: financial
+QUESTION: How many accounts who have region in Prague are eligible for loans?
+SQL: SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T1.district_id = T3.district_id WHERE T3.A3 = 'Prague'
+llmRESPONSE: financial: account, district, loan
+
+Qid: 91
+DBid: financial
+QUESTION: The average unemployment ratio of 1995 and 1996, which one has higher percentage?
+SQL: SELECT DISTINCT IIF(AVG(A13) > AVG(A12), '1996', '1995') FROM district
+llmRESPONSE: financial: transaction, district
+
+Qid: 92
+DBid: financial
+QUESTION: List out the no. of districts that have female average salary is more than 6000 but less than 10000?
+SQL: SELECT COUNT(DISTINCT T2.district_id)  FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A11 BETWEEN 6000 AND 10000
+llmRESPONSE: financial: district
+
+Qid: 93
+DBid: financial
+QUESTION: How many male customers who are living in North Bohemia have average salary greater than 8000?
+SQL: SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A3 = 'north Bohemia' AND T2.A11 > 8000
+llmRESPONSE: debit_card_specializing: customers
+
+Qid: 94
+DBid: financial
+QUESTION: List out the account numbers of female clients who are oldest and has lowest average salary, calculate the gap between this lowest average salary with the highest average salary?
+SQL: SELECT T1.account_id , ( SELECT MAX(A11) - MIN(A11) FROM district ) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T1.account_id = T3.account_id INNER JOIN client AS T4 ON T3.client_id = T4.client_id WHERE T2.district_id = ( SELECT district_id FROM client WHERE gender = 'F' ORDER BY birth_date ASC LIMIT 1 ) ORDER BY T2.A11 DESC LIMIT 1
+llmRESPONSE: financial: client, account, transaction
+
+Qid: 95
+DBid: financial
+QUESTION: List out the account numbers of clients who are youngest and have highest average salary?
+SQL: SELECT T1.account_id  FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.client_id = T3.client_id INNER JOIN district AS T4 on T4.district_id = T1.district_id WHERE T2.client_id = ( SELECT client_id FROM client ORDER BY birth_date DESC LIMIT 1) GROUP BY T4.A11, T1.account_id
+llmRESPONSE: financial: client, account
+
+Qid: 96
+DBid: financial
+QUESTION: How many customers who choose statement of weekly issuance are Owner?
+SQL: SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T2.type = 'OWNER' AND T1.frequency = 'POPLATEK TYDNE'
+llmRESPONSE: financial: disposition, client
+
+Qid: 97
+DBid: financial
+QUESTION: List out the id number of client who choose statement of issuance after transaction are Disponent?
+SQL: SELECT T2.client_id FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T1.frequency = 'POPLATEK PO OBRATU' AND T2.type = 'DISPONENT'
+llmRESPONSE: financial: transaction, disposition, client
+
+Qid: 98
+DBid: financial
+QUESTION: Among the accounts who have approved loan date in 1997, list out the accounts that have the lowest approved amount and choose weekly issuance statement.
+SQL: SELECT T2.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T1.date) = '1997' AND T2.frequency = 'POPLATEK TYDNE' ORDER BY T1.amount LIMIT 1
+llmRESPONSE: financial: loan, account
+
+Qid: 99
+DBid: financial
+QUESTION: Among the accounts who have loan validity more than 12 months, list out the accounts that have the highest approved amount and have account opening date in 1993.
+SQL: SELECT T1.account_id FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T2.date) = '1993' AND T1.duration > 12 ORDER BY T1.amount DESC LIMIT 1
+llmRESPONSE: financial: account, loan
+
+Qid: 100
+DBid: financial
+QUESTION: Among the account opened, how many female customers who were born before 1950 and stayed in Sokolov?
+SQL: SELECT COUNT(T2.client_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.gender = 'F' AND STRFTIME('%Y', T2.birth_date) < '1950' AND T1.A2 = 'Sokolov'
+llmRESPONSE: financial: account, client, district
+
+Qid: 101
+DBid: financial
+QUESTION: List out the accounts who have the earliest trading date in 1995 ?
+SQL: SELECT account_id FROM trans WHERE STRFTIME('%Y', date) = '1995' ORDER BY date ASC LIMIT 1
+llmRESPONSE: financial: account, transaction
+
+Qid: 102
+DBid: financial
+QUESTION: State different accounts who have account opening date before 1997 and own an amount of money greater than 3000USD
+SQL: SELECT DISTINCT T2.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T2.date) < '1997' AND T1.amount > 3000
+llmRESPONSE: financial: account, client
+
+Qid: 103
+DBid: financial
+QUESTION: Which client issued his/her card in 1994/3/3, give his/her client id.
+SQL: SELECT T2.client_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T2.disp_id = T3.disp_id WHERE T3.issued = '1994-03-03'
+llmRESPONSE: financial: client, card
+
+Qid: 104
+DBid: financial
+QUESTION: The transaction of 840 USD happened in 1998/10/14, when was this account opened?
+SQL: SELECT T1.date FROM account AS T1 INNER JOIN trans AS T2 ON T1.account_id = T2.account_id WHERE T2.amount = 840 AND T2.date = '1998-10-14'
+llmRESPONSE: financial: account, transaction
+
+Qid: 105
+DBid: financial
+QUESTION: There was a loan approved in 1994/8/25, where was that account opened, give the district Id of the branch.
+SQL: SELECT T1.district_id FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.date = '1994-08-25'
+llmRESPONSE: financial: account, loan, district
+
+Qid: 106
+DBid: financial
+QUESTION: What is the biggest amount of transaction that the client whose card was opened in 1996/10/21 made?
+SQL: SELECT T4.amount FROM card AS T1 JOIN disp AS T2 ON T1.disp_id = T2.disp_id JOIN account AS T3 on T2.account_id = T3.account_id JOIN trans AS T4 on T3.account_id = T4.account_id WHERE T1.issued = '1996-10-21' ORDER BY T4.amount DESC LIMIT 1
+llmRESPONSE: financial: card, client, transaction
+
+Qid: 107
+DBid: financial
+QUESTION: What is the gender of the oldest client who opened his/her account in the highest average salary branch?
+SQL: SELECT T2.gender FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id ORDER BY T1.A11 DESC, T2.birth_date ASC LIMIT 1
+llmRESPONSE: financial: client, account, district
+
+Qid: 108
+DBid: financial
+QUESTION: For the client who applied the biggest loan, what was his/her first amount of transaction after opened the account?
+SQL: SELECT T3.amount FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id ORDER BY T1.amount DESC, T3.date ASC LIMIT 1
+llmRESPONSE: financial: client, loan, account, transaction
+
+Qid: 109
+DBid: financial
+QUESTION: How many clients opened their accounts in Jesenik branch were women?
+SQL: SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A2 = 'Jesenik'
+llmRESPONSE: financial: account, client, disposition
+
+Qid: 110
+DBid: financial
+QUESTION: What is the disposition id of the client who made 5100 USD transaction in 1998/9/2?
+SQL: SELECT T1.disp_id FROM disp AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.date='1997-08-20' AND T3.amount = 5100
+llmRESPONSE: financial: client, transaction, disposition
+
+Qid: 111
+DBid: financial
+QUESTION: How many accounts were opened in Litomerice in 1996?
+SQL: SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T2.date) = '1996' AND T1.A2 = 'Litomerice'
+llmRESPONSE: financial: account, client
+
+Qid: 112
+DBid: financial
+QUESTION: For the female client who was born in 1976/1/29, which district did she opened her account?
+SQL: SELECT T1.A2 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T2.birth_date = '1976-01-29' AND T2.gender = 'F'
+llmRESPONSE: financial: client, account, district
+
+Qid: 113
+DBid: financial
+QUESTION: For the client who applied 98832 USD loan in 1996/1/3, when was his/her birthday?
+SQL: SELECT T4.birth_date FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id INNER JOIN client AS T4 ON T3.client_id = T4.client_id WHERE T1.date = '1996-01-03' AND T1.amount = 98832
+llmRESPONSE: financial: client, loan
+
+Qid: 114
+DBid: financial
+QUESTION: For the first client who opened his/her account in Prague, what is his/her account ID?
+SQL: SELECT T1.account_id FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'Prague' ORDER BY T1.date ASC LIMIT 1
+llmRESPONSE: financial: account, client, disposition, district
+
+Qid: 115
+DBid: financial
+QUESTION: For the branch which located in the south Bohemia with biggest number of inhabitants, what is the percentage of the male clients?
+SQL: SELECT CAST(SUM(T1.gender = 'M') AS REAL) * 100 / COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'south Bohemia' GROUP BY T2.A4 ORDER BY T2.A4 DESC LIMIT 1
+llmRESPONSE: financial: district, client
+
+Qid: 116
+DBid: financial
+QUESTION: For the client whose loan was approved first in 1993/7/5, what is the increase rate of his/her account balance from 1993/3/22 to 1998/12/27?
+SQL: SELECT CAST((SUM(IIF(T3.date = '1998-12-27', T3.balance, 0)) - SUM(IIF(T3.date = '1993-03-22', T3.balance, 0))) AS REAL) * 100 / SUM(IIF(T3.date = '1993-03-22', T3.balance, 0)) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T3.account_id = T2.account_id WHERE T1.date = '1993-07-05'
+llmRESPONSE: financial: loan, account, disposition, transaction
+
+Qid: 117
+DBid: financial
+QUESTION: What is the percentage of loan amount that has been fully paid with no issue.
+SQL: SELECT (CAST(SUM(CASE WHEN status = 'A' THEN amount ELSE 0 END) AS REAL) * 100) / SUM(amount) FROM loan
+llmRESPONSE: financial: loan, transaction
+
+Qid: 118
+DBid: financial
+QUESTION: For loan amount less than USD100,000, what is the percentage of accounts that is still running with no issue.
+SQL: SELECT CAST(SUM(status = 'C') AS REAL) * 100 / COUNT(account_id) FROM loan WHERE amount < 100000
+llmRESPONSE: financial: account, loan
+
+Qid: 119
+DBid: financial
+QUESTION: For accounts in 1993 with statement issued after transaction, list the account ID, district name and district region.
+SQL: SELECT T1.account_id, T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.frequency = 'POPLATEK PO OBRATU' AND STRFTIME('%Y', T1.date)= '1993'
+llmRESPONSE: financial: account, district, transaction
+
+Qid: 120
+DBid: financial
+QUESTION: From Year 1995 to 2000, who are the accounts holders from 'east Bohemia'. State the account ID the frequency of statement issuance.
+SQL: SELECT T1.account_id, T1.frequency FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A3 = 'east Bohemia' AND STRFTIME('%Y', T1.date) BETWEEN '1995' AND '2000'
+llmRESPONSE: financial: account, client, disposition
+
+Qid: 121
+DBid: financial
+QUESTION: List account ID and account opening date for accounts from 'Prachatice'.
+SQL: SELECT T1.account_id, T1.date FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A2 = 'Prachatice'
+llmRESPONSE: financial: account, client, district
+
+Qid: 122
+DBid: financial
+QUESTION: State the district and region for loan ID '4990'.
+SQL: SELECT T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.loan_id = 4990
+llmRESPONSE: financial: district, loan
+
+Qid: 123
+DBid: financial
+QUESTION: Provide the account ID, district and region for loan amount greater than USD300,000.
+SQL: SELECT T1.account_id, T2.A2, T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.amount > 300000
+llmRESPONSE: financial: account, district, loan
+
+Qid: 124
+DBid: financial
+QUESTION: List the loan ID, district and average salary for loan with duration of 60 months.
+SQL: SELECT T3.loan_id, T2.A2, T2.A11 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.duration = 60
+llmRESPONSE: financial: loan, district, client
+
+Qid: 125
+DBid: financial
+QUESTION: For loans contracts which are still running where client are in debt, list the district of the and the state the percentage unemployment rate increment from year 1995 to 1996.
+SQL: SELECT CAST((T3.A13 - T3.A12) AS REAL) * 100 / T3.A12 FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.status = 'D'
+llmRESPONSE: financial: district, loan, disposition
+
+Qid: 126
+DBid: financial
+QUESTION: Calculate the percentage of account from 'Decin' district for all accounts are opened in 1993.
+SQL: SELECT CAST(SUM(T1.A2 = 'Decin') AS REAL) * 100 / COUNT(account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T2.date) = '1993'
+llmRESPONSE: financial: account, disposition, district
+
+Qid: 127
+DBid: financial
+QUESTION: List the account IDs with monthly issuance of statements.
+SQL: SELECT account_id FROM account WHERE Frequency = 'POPLATEK MESICNE'
+llmRESPONSE: financial: account, transaction
+
+Qid: 128
+DBid: financial
+QUESTION: List the top nine districts, by descending order, from the highest to the lowest, the number of female account holders.
+SQL: SELECT T2.A2, COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' GROUP BY T2.district_id, T2.A2 ORDER BY COUNT(T1.client_id) DESC LIMIT 9
+llmRESPONSE: financial: account, client, district
+
+Qid: 129
+DBid: financial
+QUESTION: Which are the top ten withdrawals (non-credit card) by district names for the month of January 1996?
+SQL: SELECT DISTINCT T1.A2 FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'VYDAJ' AND T3.date LIKE '1996-01%' ORDER BY A2 ASC LIMIT 10
+llmRESPONSE: financial: transaction, district, disposition
+
+Qid: 130
+DBid: financial
+QUESTION: How many of the account holders in South Bohemia still do not own credit cards?
+SQL: SELECT COUNT(T3.account_id) FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.client_id = T3.client_id WHERE T1.A3 = 'south Bohemia' AND T3.type != 'OWNER'
+llmRESPONSE: financial: client, account, card, district, disposition
+
+Qid: 131
+DBid: financial
+QUESTION: Which district has highest active loan?
+SQL: SELECT T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.status IN ('C', 'D') GROUP BY T2.A3 ORDER BY SUM(T3.amount) DESC LIMIT 1
+llmRESPONSE: financial: district, loan
+
+Qid: 132
+DBid: financial
+QUESTION: What is the average loan amount by male borrowers?
+SQL: SELECT AVG(T4.amount) FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN loan AS T4 ON T3.account_id = T4.account_id WHERE T1.gender = 'M'
+llmRESPONSE: financial: client, loan
+
+Qid: 133
+DBid: financial
+QUESTION: In 1996, which districts have the highest unemployment rate? List their branch location and district name.
+SQL: SELECT district_id, A2 FROM district ORDER BY A13 DESC LIMIT 1
+llmRESPONSE: financial: district, transaction
+
+Qid: 134
+DBid: financial
+QUESTION: In the branch where the largest number of crimes were committed in 1996, how many accounts were opened?
+SQL: SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id GROUP BY T1.A16 ORDER BY T1.A16 DESC LIMIT 1
+llmRESPONSE: financial: account, district
+
+Qid: 135
+DBid: financial
+QUESTION: After making a credit card withdrawal, how many account/s with monthly issuance has a negative balance?
+SQL: SELECT COUNT(T1.account_id) FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T1.balance < 0 AND T1.operation = 'VYBER KARTOU' AND T2.frequency = 'POPLATEK MESICNE'
+llmRESPONSE: financial: account, transaction
+
+Qid: 136
+DBid: financial
+QUESTION: Between 1/1/1995 and 12/31/1997, how many loans in the amount of at least 250,000 per account that chose monthly statement issuance were approved?
+SQL: SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.date BETWEEN '1995-01-01' AND '1997-12-31' AND T1.frequency = 'POPLATEK MESICNE' AND T2.amount >= 250000
+llmRESPONSE: financial: account, loan, disposition
+
+Qid: 137
+DBid: financial
+QUESTION: How many accounts have running contracts in Branch location 1?
+SQL: SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T1.district_id = 1 AND (T3.status = 'C' OR T3.status = 'D')
+llmRESPONSE: financial: account, district
+
+Qid: 138
+DBid: financial
+QUESTION: In the branch where the second-highest number of crimes were committed in 1995 occurred, how many male clients are there?
+SQL: SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A15 = (SELECT T3.A15 FROM district AS T3 ORDER BY T3.A15 DESC LIMIT 1, 1)
+llmRESPONSE: financial: district, client
+
+Qid: 139
+DBid: financial
+QUESTION: How many high-level credit cards have "OWNER" type of disposition?
+SQL: SELECT COUNT(T1.card_id) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'gold' AND T2.type = 'OWNER'
+llmRESPONSE: financial: card, disposition
+
+Qid: 140
+DBid: financial
+QUESTION: How many accounts are there in the district of "Pisek"?
+SQL: SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T2.A2 = 'Pisek'
+llmRESPONSE: financial: account, district
+
+Qid: 141
+DBid: financial
+QUESTION: Which districts have transactions greater than USS$10,000 in 1997?
+SQL: SELECT T1.district_id FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T1.account_id = T3.account_id WHERE STRFTIME('%Y', T3.date) = '1997' GROUP BY T1.district_id HAVING SUM(T3.amount) > 10000
+llmRESPONSE: financial: district, transaction
+
+Qid: 142
+DBid: financial
+QUESTION: Which accounts placed orders for household payment in Pisek?
+SQL: SELECT DISTINCT T2.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.k_symbol = 'SIPO' AND T3.A2 = 'Pisek'
+llmRESPONSE: financial: account, order, district
+
+Qid: 143
+DBid: financial
+QUESTION: What are the accounts that have gold credit cards?
+SQL: SELECT T2.account_id FROM disp AS T2  INNER JOIN card AS T1 ON T1.disp_id = T2.disp_id  WHERE T1.type = 'gold'
+llmRESPONSE: financial: account, card
+
+Qid: 144
+DBid: financial
+QUESTION: How much is the average amount in credit card made by account holders in a month, in year 2021?
+SQL: SELECT AVG(T4.amount) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE STRFTIME('%Y', T4.date) = '1998' AND T4.operation = 'VYBER KARTOU'
+llmRESPONSE: financial: account, card, transaction
+
+Qid: 145
+DBid: financial
+QUESTION: Who are the account holder identification numbers whose who have transactions on the credit card with the amount is less than the average, in 1998?
+SQL: SELECT T1.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T1.date) = '1998' AND T1.operation = 'VYBER KARTOU' AND T1.amount < (SELECT AVG(amount) FROM trans WHERE STRFTIME('%Y', date) = '1998')
+llmRESPONSE: financial: account, card, transaction
+
+Qid: 146
+DBid: financial
+QUESTION: Who are the female account holders who own credit cards and also have loans?
+SQL: SELECT T1.client_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T5 ON T2.account_id = T5.account_id INNER JOIN loan AS T3 ON T5.account_id = T3.account_id INNER JOIN card AS T4 ON T2.disp_id = T4.disp_id WHERE T1.gender = 'F'
+llmRESPONSE: financial: account, card, client, loan
+
+Qid: 147
+DBid: financial
+QUESTION: How many female clients' accounts are in the region of South Bohemia?
+SQL: SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' AND T2.A3 = 'south Bohemia'
+llmRESPONSE: financial: account, client, district
+
+Qid: 148
+DBid: financial
+QUESTION: Please list the accounts whose district is Tabor that are eligible for loans.
+SQL: SELECT T2.account_id FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'OWNER' AND T1.A2 = 'Tabor'
+llmRESPONSE: financial: account, district, loan
+
+Qid: 149
+DBid: financial
+QUESTION: Please list the account types that are not eligible for loans, and the average income of residents in the district where the account is located exceeds $8000 but is no more than $9000.
+SQL: SELECT T3.type FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type != 'OWNER' AND T1.A11 BETWEEN 8000 AND 9000
+llmRESPONSE: financial: account, district, loan, client
+
+Qid: 150
+DBid: financial
+QUESTION: How many accounts in North Bohemia has made a transaction with the partner's bank being AB?
+SQL: SELECT COUNT(T2.account_id) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.bank = 'AB' AND T1.A3 = 'north Bohemia'
+llmRESPONSE: financial: account, transaction, district
+
+Qid: 151
+DBid: financial
+QUESTION: Please list the name of the districts with accounts that made withdrawal transactions.
+SQL: SELECT DISTINCT T1.A2 FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.type = 'VYDAJ'
+llmRESPONSE: financial: account, district, transaction
+
+Qid: 152
+DBid: financial
+QUESTION: What is the average number of crimes committed in 1995 in regions where the number exceeds 4000 and the region has accounts that are opened starting from the year 1997?
+SQL: SELECT AVG(T1.A15) FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id WHERE STRFTIME('%Y', T2.date) >= '1997' AND T1.A15 > 4000
+llmRESPONSE: financial: account, disposition, district
+
+Qid: 153
+DBid: financial
+QUESTION: How many 'classic' cards are eligible for loan?
+SQL: SELECT COUNT(T1.card_id) FROM card AS T1 INNER JOIN disp AS T2 ON T1.disp_id = T2.disp_id WHERE T1.type = 'classic' AND T2.type = 'OWNER'
+llmRESPONSE: financial: card, loan
+
+Qid: 154
+DBid: financial
+QUESTION: How many male clients in 'Hl.m. Praha' district?
+SQL: SELECT COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'M' AND T2.A2 = 'Hl.m. Praha'
+llmRESPONSE: financial: client, district
+
+Qid: 155
+DBid: financial
+QUESTION: How many percent of 'Gold' cards were issued prior to 1998?
+SQL: SELECT CAST(SUM(type = 'gold' AND STRFTIME('%Y', issued) < '1998') AS REAL) * 100 / COUNT(card_id) FROM card
+llmRESPONSE: financial: card, transaction
+
+Qid: 156
+DBid: financial
+QUESTION: Who is the owner of the account with the largest loan amount?
+SQL: SELECT T1.client_id FROM disp AS T1 INNER JOIN account AS T3 ON T1.account_id = T3.account_id INNER JOIN loan AS T2 ON T3.account_id = T2.account_id WHERE T1.type = 'OWNER' ORDER BY T2.amount DESC LIMIT 1
+llmRESPONSE: financial: account, loan, client
+
+Qid: 157
+DBid: financial
+QUESTION: What is the number of committed crimes in 1995 in the district of the account with the id 532?
+SQL: SELECT T1.A15 FROM district AS T1 INNER JOIN `account` AS T2 ON T1.district_id = T2.district_id WHERE T2.account_id = 532
+llmRESPONSE: financial: account, district, disposition
+
+Qid: 158
+DBid: financial
+QUESTION: What is the district Id of the account that placed the order with the id 33333?
+SQL: SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333
+llmRESPONSE: financial: account, order, district
+
+Qid: 159
+DBid: financial
+QUESTION: List all the withdrawals in cash transactions that the client with the id 3356 makes.
+SQL: SELECT T4.trans_id FROM client AS T1 INNER JOIN disp AS T2 ON T1.client_id = T2.client_id INNER JOIN account AS T3 ON T2.account_id = T3.account_id INNER JOIN trans AS T4 ON T3.account_id = T4.account_id WHERE T1.client_id = 3356 AND T4.operation = 'VYBER'
+llmRESPONSE: financial: client, transaction, account
+
+Qid: 160
+DBid: financial
+QUESTION: Among the weekly issuance accounts, how many have a loan of under 200000?
+SQL: SELECT COUNT(T1.account_id) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE T2.frequency = 'POPLATEK TYDNE' AND T1.amount < 200000
+llmRESPONSE: financial: account, loan
+
+Qid: 161
+DBid: financial
+QUESTION: What type of credit card does the client with the id 13539 own?
+SQL: SELECT T3.type FROM disp AS T1 INNER JOIN client AS T2 ON T1.client_id = T2.client_id INNER JOIN card AS T3 ON T1.disp_id = T3.disp_id WHERE T2.client_id = 13539
+llmRESPONSE: financial: client, card
+
