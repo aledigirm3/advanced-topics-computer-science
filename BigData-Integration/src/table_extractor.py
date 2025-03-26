@@ -3,6 +3,7 @@ import os
 import sys
 from llm import query_groq
 from data_manipulation import get_db_dict_mapping
+from data_manipulation import get_entry_from_llmResponse
 from examples import findTables_example1DEV, findTables_example2DEV, findTables_example3DEV
 
 ### --------- ###
@@ -71,30 +72,14 @@ if __name__ == '__main__':
         print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} created.")
     else:
         print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} already exist.")
-        
-    filename = "match_tables.txt"
+
     
     original2name, name2original = get_db_dict_mapping(isTrain=False)
     
-    with open(paths.LLM_RESPONSE + "match_databases.txt", "r", encoding="utf-8") as file:
-        text = file.read()
-
-    pattern = re.findall(
-        r"Qid: (\d+)\nDBid: ([^\n]+)\nQUESTION: ([^\n]+)\nSQL: ([^\n]+)\nllmRESPONSE: ([^\n]+)", 
-        text
-    )
-    data = {
-        int(qid): {
-            "DBid": dbid.strip(),
-            "QUESTION": question.strip(),
-            "SQL": sql.strip(),
-            "llmRESPONSE": llmresp.strip(),
-        }
-        for qid, dbid, question, sql, llmresp in pattern
-    }
+    filename = "match_databases.txt"
+    data = get_entry_from_llmResponse(paths.LLM_RESPONSE + filename)
     
-    
-    
+    filename = "match_tables.txt"
     with open(paths.LLM_RESPONSE + filename, "a", encoding="utf-8") as file:
         for qid, entry in data.items():
             db1= ""
