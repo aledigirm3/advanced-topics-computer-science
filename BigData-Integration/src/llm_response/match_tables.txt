@@ -1344,3 +1344,573 @@ QUESTION: What are the atom IDs of the bond TR000_2_5?
 SQL: SELECT T.atom_id FROM connected AS T WHERE T.bond_id = 'TR000_2_5'
 llmRESPONSE: toxicology: bond, atom
 
+Qid: 224
+DBid: toxicology
+QUESTION: What are the bond IDs that have the same atom ID 2 of TR000_2?
+SQL: SELECT T.bond_id FROM connected AS T WHERE T.atom_id2 = 'TR000_2'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 225
+DBid: toxicology
+QUESTION: Please list top five molecules that have double bonds in alphabetical order.
+SQL: SELECT DISTINCT T.molecule_id FROM bond AS T WHERE T.bond_type = '=' ORDER BY T.molecule_id LIMIT 5
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 226
+DBid: toxicology
+QUESTION: What is the percentage of double bonds in the molecule TR008? Please provide your answer as a percentage with five decimal places.
+SQL: SELECT ROUND(CAST(COUNT(CASE WHEN T.bond_type = '=' THEN T.bond_id ELSE NULL END) AS REAL) * 100 / COUNT(T.bond_id),5) FROM bond AS T WHERE T.molecule_id = 'TR008'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 227
+DBid: toxicology
+QUESTION: What is the percentage of molecules that are carcinogenic? Please provide your answer as a percentage with three decimal places.
+SQL: SELECT ROUND(CAST(COUNT(CASE WHEN T.label = '+' THEN T.molecule_id ELSE NULL END) AS REAL) * 100 / COUNT(T.molecule_id),3) FROM molecule t
+llmRESPONSE: toxicology: molecule
+
+Qid: 228
+DBid: toxicology
+QUESTION: How much of the hydrogen in molecule TR206 is accounted for? Please provide your answer as a percentage with four decimal places.
+SQL: SELECT ROUND(CAST(COUNT(CASE WHEN T.element = 'h' THEN T.atom_id ELSE NULL END) AS REAL) * 100 / COUNT(T.atom_id),4) FROM atom AS T WHERE T.molecule_id = 'TR206'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 229
+DBid: toxicology
+QUESTION: What is the type of bond that molecule TR000 has when involved in any bonds?
+SQL: SELECT DISTINCT T.bond_type FROM bond AS T WHERE T.molecule_id = 'TR000'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 230
+DBid: toxicology
+QUESTION: What are the elements of the toxicology and label of molecule TR060?
+SQL: SELECT DISTINCT T1.element, T2.label FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.molecule_id = 'TR060'
+llmRESPONSE: toxicology: atom, molecule, bond
+
+Qid: 231
+DBid: toxicology
+QUESTION: Which bond type accounted for the majority of the bonds found in molecule TR010 and state whether or not this molecule is carcinogenic?
+SQL: SELECT T.bond_type FROM ( SELECT T1.bond_type, COUNT(T1.molecule_id) FROM bond AS T1  WHERE T1.molecule_id = 'TR010' GROUP BY T1.bond_type ORDER BY COUNT(T1.molecule_id) DESC LIMIT 1 ) AS T
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 232
+DBid: toxicology
+QUESTION: Please list top three molecules that have single bonds between two atoms and are not carcinogenic in alphabetical order.
+SQL: SELECT DISTINCT T2.molecule_id FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '-' AND T2.label = '-' ORDER BY T2.molecule_id LIMIT 3
+llmRESPONSE: toxicology: bond, molecule, connected
+
+Qid: 233
+DBid: toxicology
+QUESTION: Please list top two bonds that happened with the molecule TR006 in alphabetical order.
+SQL: SELECT DISTINCT T2.bond_id FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T1.molecule_id = 'TR006' ORDER BY T2.bond_id LIMIT 2
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 234
+DBid: toxicology
+QUESTION: How many bonds which involved atom 12 does molecule TR009 have?
+SQL: SELECT COUNT(T2.bond_id) FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE T1.molecule_id = 'TR009' AND T2.atom_id = T1.molecule_id || '_1' AND T2.atom_id2 = T1.molecule_id || '_2'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 235
+DBid: toxicology
+QUESTION: How many molecules are carcinogenic and have the bromine element?
+SQL: SELECT COUNT(DISTINCT T2.molecule_id) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+' AND T1.element = 'br'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 236
+DBid: toxicology
+QUESTION: What are the bond type and the atoms of the bond ID of TR001_6_9?
+SQL: SELECT T1.bond_type, T2.atom_id, T2.atom_id2 FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE T2.bond_id = 'TR001_6_9'
+llmRESPONSE: toxicology: bond, atom
+
+Qid: 237
+DBid: toxicology
+QUESTION: Which molecule does the atom TR001_10 belong to? Please state whether this molecule is carcinogenic or not.
+SQL: SELECT T2.molecule_id , IIF(T2.label = '+', 'YES', 'NO') AS flag_carcinogenic FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.atom_id = 'TR001_10'
+llmRESPONSE: toxicology: atom, molecule, connected
+
+Qid: 238
+DBid: toxicology
+QUESTION: How many molecules have a triple bond type?
+SQL: SELECT COUNT(DISTINCT T.molecule_id) FROM bond AS T WHERE T.bond_type = '#'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 239
+DBid: toxicology
+QUESTION: How many connections does the atom 19 have?
+SQL: SELECT COUNT(T.bond_id) FROM connected AS T WHERE SUBSTR(T.atom_id, -2) = '19'
+llmRESPONSE: toxicology: atom, connected
+
+Qid: 240
+DBid: toxicology
+QUESTION: List all the elements of the toxicology of the molecule "TR004".
+SQL: SELECT DISTINCT T.element FROM atom AS T WHERE T.molecule_id = 'TR004'
+llmRESPONSE: toxicology: molecule, atom, bond, connected
+
+Qid: 241
+DBid: toxicology
+QUESTION: How many of the molecules are not carcinogenic?
+SQL: SELECT COUNT(T.molecule_id) FROM molecule AS T WHERE T.label = '-'
+llmRESPONSE: toxicology: molecule
+
+Qid: 242
+DBid: toxicology
+QUESTION: Among all the atoms from 21 to 25, list all the molecules that are carcinogenic.
+SQL: SELECT DISTINCT T2.molecule_id FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE SUBSTR(T1.atom_id, -2) BETWEEN '21' AND '25' AND T2.label = '+'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 243
+DBid: toxicology
+QUESTION: What are the bonds that have phosphorus and nitrogen as their atom elements?
+SQL: SELECT T2.bond_id FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T2.bond_id IN ( SELECT T3.bond_id FROM connected AS T3 INNER JOIN atom AS T4 ON T3.atom_id = T4.atom_id WHERE T4.element = 'p' ) AND T1.element = 'n'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 244
+DBid: toxicology
+QUESTION: Is the molecule with the most double bonds carcinogenic?
+SQL: SELECT T1.label FROM molecule AS T1 INNER JOIN ( SELECT T.molecule_id, COUNT(T.bond_type) FROM bond AS T WHERE T.bond_type = '=' GROUP BY T.molecule_id ORDER BY COUNT(T.bond_type) DESC LIMIT 1 ) AS T2 ON T1.molecule_id = T2.molecule_id
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 245
+DBid: toxicology
+QUESTION: What is the average number of bonds the atoms with the element iodine have?
+SQL: SELECT CAST(COUNT(T2.bond_id) AS REAL) / COUNT(T1.atom_id) FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T1.element = 'i'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 246
+DBid: toxicology
+QUESTION: List the bond type and the bond ID of the atom 45.
+SQL: SELECT T1.bond_type, T1.bond_id FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE SUBSTR(T2.atom_id, 7, 2) = '45'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 247
+DBid: toxicology
+QUESTION: List all the elements of atoms that can not bond with any other atoms.
+SQL: SELECT DISTINCT T.element FROM atom AS T WHERE T.element NOT IN ( SELECT DISTINCT T1.element FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id )
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 248
+DBid: toxicology
+QUESTION: What are the atoms of the triple bond with the molecule "TR041"?
+SQL: SELECT T2.atom_id, T2.atom_id2 FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id INNER JOIN bond AS T3 ON T2.bond_id = T3.bond_id WHERE T3.bond_type = '#' AND T3.molecule_id = 'TR041'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 249
+DBid: toxicology
+QUESTION: What are the elements of the atoms of TR144_8_19?
+SQL: SELECT T2.element FROM connected AS T1 INNER JOIN atom AS T2 ON T1.atom_id = T2.atom_id WHERE T1.bond_id = 'TR144_8_19'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 250
+DBid: toxicology
+QUESTION: Of all the carcinogenic molecules, which one has the most double bonds?
+SQL: SELECT T.molecule_id FROM ( SELECT T3.molecule_id, COUNT(T1.bond_type) FROM bond AS T1 INNER JOIN molecule AS T3 ON T1.molecule_id = T3.molecule_id WHERE T3.label = '+' AND T1.bond_type = '=' GROUP BY T3.molecule_id ORDER BY COUNT(T1.bond_type) DESC LIMIT 1 ) AS T
+llmRESPONSE: toxicology: molecule, bond
+
+Qid: 251
+DBid: toxicology
+QUESTION: What is the least common element of all carcinogenic molecules?
+SQL: SELECT T.element FROM ( SELECT T2.element, COUNT(DISTINCT T2.molecule_id) FROM molecule AS T1 INNER JOIN atom AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.label = '+' GROUP BY T2.element ORDER BY COUNT(DISTINCT T2.molecule_id) LIMIT 1 ) t
+llmRESPONSE: toxicology: atom, molecule, bond
+
+Qid: 252
+DBid: toxicology
+QUESTION: What are the atoms that can bond with the atom that has the element lead?
+SQL: SELECT T2.atom_id, T2.atom_id2 FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T1.element = 'pb'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 253
+DBid: toxicology
+QUESTION: List the elements of all the triple bonds.
+SQL: SELECT DISTINCT T3.element FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id INNER JOIN atom AS T3 ON T2.atom_id = T3.atom_id WHERE T1.bond_type = '#'
+llmRESPONSE: toxicology: bond, molecule, atom
+
+Qid: 254
+DBid: toxicology
+QUESTION: What percentage of bonds have the most common combination of atoms' elements?
+SQL: SELECT CAST((SELECT COUNT(T1.atom_id) FROM connected AS T1 INNER JOIN bond AS T2 ON T1.bond_id = T2.bond_id GROUP BY T2.bond_type ORDER BY COUNT(T2.bond_id) DESC LIMIT 1 ) AS REAL) * 100 / ( SELECT COUNT(atom_id) FROM connected )
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 255
+DBid: toxicology
+QUESTION: What proportion of single bonds are carcinogenic? Please provide your answer as a percentage with five decimal places.
+SQL: SELECT ROUND(CAST(COUNT(CASE WHEN T2.label = '+' THEN T1.bond_id ELSE NULL END) AS REAL) * 100 / COUNT(T1.bond_id),5) FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '-'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 256
+DBid: toxicology
+QUESTION: Calculate the total atoms consisting of the element carbon and hydrogen.
+SQL: SELECT COUNT(T.atom_id) FROM atom AS T WHERE T.element = 'c' OR T.element = 'h'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 257
+DBid: toxicology
+QUESTION: List down atom id2 for atoms with element sulfur.
+SQL: SELECT DISTINCT T2.atom_id2 FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T1.element = 's'
+llmRESPONSE: toxicology: atom
+
+Qid: 258
+DBid: toxicology
+QUESTION: What are the bond type for atoms with element Tin?
+SQL: SELECT DISTINCT T3.bond_type FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id INNER JOIN bond AS T3 ON T3.bond_id = T2.bond_id WHERE T1.element = 'sn'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 259
+DBid: toxicology
+QUESTION: How many elements are there for single bond molecules?
+SQL: SELECT COUNT(DISTINCT T.element) FROM ( SELECT DISTINCT T2.molecule_id, T1.element FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id INNER JOIN bond AS T3 ON T2.molecule_id = T3.molecule_id WHERE T3.bond_type = '-' ) AS T
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 260
+DBid: toxicology
+QUESTION: Calculate the total atoms with triple-bond molecules containing the element phosphorus or bromine.
+SQL: SELECT COUNT(T1.atom_id) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id INNER JOIN bond AS T3 ON T2.molecule_id = T3.molecule_id WHERE T3.bond_type = '#' AND T1.element IN ('p', 'br')
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 261
+DBid: toxicology
+QUESTION: Write down bond id for molecules that are carcinogenic.
+SQL: SELECT DISTINCT T1.bond_id FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 262
+DBid: toxicology
+QUESTION: Among the single bond molecule id, which molecules are not carcinogenic?
+SQL: SELECT DISTINCT T1.molecule_id FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '-' AND T1.bond_type = '-'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 263
+DBid: toxicology
+QUESTION: What is the composition of element chlorine in percentage among the single bond molecules?
+SQL: SELECT CAST(COUNT(CASE WHEN T.element = 'cl' THEN T.atom_id ELSE NULL END) AS REAL) * 100 / COUNT(T.atom_id) FROM ( SELECT T1.atom_id, T1.element FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id INNER JOIN bond AS T3 ON T2.molecule_id = T3.molecule_id WHERE T3.bond_type = '-' ) AS T
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 264
+DBid: toxicology
+QUESTION: What are the labels for TR000, TR001 and TR002?
+SQL: SELECT molecule_id, T.label FROM molecule AS T WHERE T.molecule_id IN ('TR000', 'TR001', 'TR002')
+llmRESPONSE: toxicology: molecule
+
+Qid: 265
+DBid: toxicology
+QUESTION: List down the molecule id for non carcinogenic molecules.
+SQL: SELECT T.molecule_id FROM molecule AS T WHERE T.label = '-'
+llmRESPONSE: toxicology: molecule
+
+Qid: 266
+DBid: toxicology
+QUESTION: Calculate the total carcinogenic molecules for molecule id from TR000 to TR030.
+SQL: SELECT COUNT(T.molecule_id) FROM molecule AS T WHERE T.molecule_id BETWEEN 'TR000' AND 'TR030' AND T.label = '+'
+llmRESPONSE: toxicology: molecule
+
+Qid: 267
+DBid: toxicology
+QUESTION: List down the bond type for molecules from molecule id TR000 to TR050.
+SQL: SELECT T2.molecule_id, T2.bond_type FROM molecule AS T1 INNER JOIN bond AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.molecule_id BETWEEN 'TR000' AND 'TR050'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 268
+DBid: toxicology
+QUESTION: What are the elements for bond id TR001_10_11?
+SQL: SELECT T2.element FROM connected AS T1 INNER JOIN atom AS T2 ON T1.atom_id = T2.atom_id WHERE T1.bond_id = 'TR001_10_11'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 269
+DBid: toxicology
+QUESTION: How many bond id have element iodine?
+SQL: SELECT COUNT(T3.bond_id) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id INNER JOIN bond AS T3 ON T2.molecule_id = T3.molecule_id WHERE T1.element = 'i'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 270
+DBid: toxicology
+QUESTION: Among the molecules with element Calcium, are they mostly carcinogenic or non carcinogenic?
+SQL: SELECT T2.label FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'ca' GROUP BY T2.label ORDER BY COUNT(T2.label) DESC LIMIT 1
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 271
+DBid: toxicology
+QUESTION: Does bond id TR001_1_8 have both element of chlorine and carbon?
+SQL: SELECT T2.bond_id, T2.atom_id2, T1.element AS flag_have_CaCl FROM atom AS T1 INNER JOIN connected AS T2 ON T2.atom_id = T1.atom_id WHERE T2.bond_id = 'TR001_1_8' AND (T1.element = 'c1' OR T1.element = 'c')
+llmRESPONSE: toxicology: atom, bond, connected, molecule
+
+Qid: 272
+DBid: toxicology
+QUESTION: List down two molecule id of triple bond non carcinogenic molecules with element carbon.
+SQL: SELECT DISTINCT T2.molecule_id FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id INNER JOIN bond AS T3 ON T2.molecule_id = T3.molecule_id WHERE T3.bond_type = '#' AND T1.element = 'c' AND T2.label = '-'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 273
+DBid: toxicology
+QUESTION: What is the percentage of element chlorine in carcinogenic molecules?
+SQL: SELECT CAST(COUNT( CASE WHEN T1.element = 'cl' THEN T1.element ELSE NULL END) AS REAL) * 100 / COUNT(T1.element) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 274
+DBid: toxicology
+QUESTION: List the toxicology elements associated with molecule TR001.
+SQL: SELECT DISTINCT T.element FROM atom AS T WHERE T.molecule_id = 'TR001'
+llmRESPONSE: toxicology: molecule, atom
+
+Qid: 275
+DBid: toxicology
+QUESTION: Give me the molecule ID of the double bond type.
+SQL: SELECT DISTINCT T.molecule_id FROM bond AS T WHERE T.bond_type = '='
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 276
+DBid: toxicology
+QUESTION: Write down the atom IDs of the first and second atoms of triple bond type molecules.
+SQL: SELECT T2.atom_id, T2.atom_id2 FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE T1.bond_type = '#'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 277
+DBid: toxicology
+QUESTION: What are the toxicology elements associated with bond ID TR000_1_2?
+SQL: SELECT T1.element FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T2.bond_id = 'TR000_1_2'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 278
+DBid: toxicology
+QUESTION: How many of the single bond type molecules are non-carcinogenic?
+SQL: SELECT COUNT(DISTINCT T2.molecule_id) FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '-' AND T1.bond_type = '-'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 279
+DBid: toxicology
+QUESTION: What is the label for bond ID TR001_10_11?
+SQL: SELECT T2.label FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_id = 'TR001_10_11'
+llmRESPONSE: toxicology: bond
+
+Qid: 280
+DBid: toxicology
+QUESTION: Enumerate the bond ID of triple bond type molecules and tell me if they are carcinogenic or not.
+SQL: SELECT DISTINCT T1.bond_id, T2.label FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '#'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 281
+DBid: toxicology
+QUESTION: Tally the toxicology element of the 4th atom of each molecule that was carcinogenic.
+SQL: SELECT DISTINCT T1.element FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+' AND SUBSTR(T1.atom_id, -1) = '4' AND LENGTH(T1.atom_id) = 7
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 282
+DBid: toxicology
+QUESTION: What is the ratio of Hydrogen elements in molecule ID TR006? List the ratio with its label.
+SQL: WITH SubQuery AS (SELECT DISTINCT T1.atom_id, T1.element, T1.molecule_id, T2.label FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.molecule_id = 'TR006') SELECT CAST(COUNT(CASE WHEN element = 'h' THEN atom_id ELSE NULL END) AS REAL) / (CASE WHEN COUNT(atom_id) = 0 THEN NULL ELSE COUNT(atom_id) END) AS ratio, label FROM SubQuery GROUP BY label
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 283
+DBid: toxicology
+QUESTION: Identify whether the chemical compound that contains Calcium is carcinogenic.
+SQL: SELECT T2.label AS flag_carcinogenic FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'ca'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 284
+DBid: toxicology
+QUESTION: Determine the bond type that is formed in the chemical compound containing element Carbon.
+SQL: SELECT DISTINCT T2.bond_type FROM atom AS T1 INNER JOIN bond AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'c'
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 285
+DBid: toxicology
+QUESTION: Name chemical elements that form a bond TR001_10_11.
+SQL: SELECT T1.element FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id INNER JOIN bond AS T3 ON T2.bond_id = T3.bond_id WHERE T3.bond_id = 'TR001_10_11'
+llmRESPONSE: toxicology: bond, atom
+
+Qid: 286
+DBid: toxicology
+QUESTION: Among all chemical compounds identified in the database, what percent of compounds form a triple-bond.
+SQL: SELECT CAST(COUNT(CASE WHEN T.bond_type = '#' THEN T.bond_id ELSE NULL END) AS REAL) * 100 / COUNT(T.bond_id) FROM bond AS T
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 287
+DBid: toxicology
+QUESTION: Among all chemical compounds that contain molecule TR047, identify the percent that form a double-bond.
+SQL: SELECT CAST(COUNT(CASE WHEN T.bond_type = '=' THEN T.bond_id ELSE NULL END) AS REAL) * 100 / COUNT(T.bond_id) FROM bond AS T WHERE T.molecule_id = 'TR047'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 288
+DBid: toxicology
+QUESTION: Identify whether the molecule that contains atom TR001_1 is carcinogenic.
+SQL: SELECT T2.label AS flag_carcinogenic FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.atom_id = 'TR001_1'
+llmRESPONSE: toxicology: atom, molecule, connected
+
+Qid: 289
+DBid: toxicology
+QUESTION: Is molecule TR151 carcinogenic?
+SQL: SELECT T.label FROM molecule AS T WHERE T.molecule_id = 'TR151'
+llmRESPONSE: toxicology: molecule
+
+Qid: 290
+DBid: toxicology
+QUESTION: Which toxic element can be found in the molecule TR151?
+SQL: SELECT DISTINCT T.element FROM atom AS T WHERE T.molecule_id = 'TR151'
+llmRESPONSE: toxicology: molecule, atom
+
+Qid: 291
+DBid: toxicology
+QUESTION: How many chemical compounds in the database are identified as carcinogenic.
+SQL: SELECT COUNT(T.molecule_id) FROM molecule AS T WHERE T.label = '+'
+llmRESPONSE: toxicology: molecule
+
+Qid: 292
+DBid: toxicology
+QUESTION: Identify the atoms belong to the molecule with ID between TR010 to TR050 that contain the element carbon.
+SQL: SELECT T.atom_id FROM atom AS T WHERE T.molecule_id BETWEEN 'TR010' AND 'TR050' AND T.element = 'c'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 293
+DBid: toxicology
+QUESTION: How many atoms belong to the molecule labeled with carcinogenic compounds?
+SQL: SELECT COUNT(T1.atom_id) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+'
+llmRESPONSE: toxicology: molecule, atom
+
+Qid: 294
+DBid: toxicology
+QUESTION: Which bond ids are double-bond with carcinogenic compound?
+SQL: SELECT T1.bond_id FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+' AND T1.bond_type = '='
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 295
+DBid: toxicology
+QUESTION: How many atoms belong to the molecule that element is hydrogen and labeled with carcinogenic compound?
+SQL: SELECT COUNT(T1.atom_id) AS atomnums_h FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+' AND T1.element = 'h'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 296
+DBid: toxicology
+QUESTION: Indicate the molecule id is belonging to the TR000_1_2 bond that has the first atom named TR000_1.
+SQL: SELECT T2.molecule_id, T2.bond_id, T1.atom_id FROM connected AS T1 INNER JOIN bond AS T2 ON T1.bond_id = T2.bond_id WHERE T1.atom_id = 'TR000_1' AND T2.bond_id = 'TR000_1_2'
+llmRESPONSE: toxicology: bond, atom, molecule
+
+Qid: 297
+DBid: toxicology
+QUESTION: Among the atoms that contain element carbon, which one does not contain compound carcinogenic?
+SQL: SELECT T1.atom_id FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'c' AND T2.label = '-'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 298
+DBid: toxicology
+QUESTION: Calculate the percentage of molecules containing carcinogenic compounds that element is hydrogen.
+SQL: SELECT CAST(COUNT(CASE WHEN T1.element = 'h' AND T2.label = '+' THEN T2.molecule_id ELSE NULL END) AS REAL) * 100 / COUNT(T2.molecule_id) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id
+llmRESPONSE: toxicology: molecule, atom
+
+Qid: 299
+DBid: toxicology
+QUESTION: Is molecule TR124 carcinogenic?
+SQL: SELECT T.label FROM molecule AS T WHERE T.molecule_id = 'TR124'
+llmRESPONSE: toxicology: molecule
+
+Qid: 300
+DBid: toxicology
+QUESTION: What atoms comprise TR186?
+SQL: SELECT T.atom_id FROM atom AS T WHERE T.molecule_id = 'TR186'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 301
+DBid: toxicology
+QUESTION: What is the bond type of TR007_4_19?
+SQL: SELECT T.bond_type FROM bond AS T WHERE T.bond_id = 'TR007_4_19'
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 302
+DBid: toxicology
+QUESTION: Name the elements that comprise the atoms of bond TR001_2_4.
+SQL: SELECT DISTINCT T1.element FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T2.bond_id = 'TR001_2_4'
+llmRESPONSE: toxicology: atom, bond, connected, molecule
+
+Qid: 303
+DBid: toxicology
+QUESTION: How many double bonds does TR006 have and is it carcinogenic?
+SQL: SELECT COUNT(T1.bond_id), T2.label FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '=' AND T2.molecule_id = 'TR006' GROUP BY T2.label
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 304
+DBid: toxicology
+QUESTION: List all carcinogenic molecules and their elements.
+SQL: SELECT DISTINCT T2.molecule_id, T1.element FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T2.label = '+'
+llmRESPONSE: toxicology: molecule, atom
+
+Qid: 305
+DBid: toxicology
+QUESTION: Name all bonds with single bond types and what atoms are connected to the molecules.
+SQL: SELECT T1.bond_id, T2.atom_id, T2.atom_id2 FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE T1.bond_type = '-'
+llmRESPONSE: toxicology: bond, connected, molecule
+
+Qid: 306
+DBid: toxicology
+QUESTION: Which molecules have triple bonds and list all the elements they contain.
+SQL: SELECT DISTINCT T1.molecule_id, T2.element FROM bond AS T1 INNER JOIN atom AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '#'
+llmRESPONSE: toxicology: bond, molecule, atom
+
+Qid: 307
+DBid: toxicology
+QUESTION: Name the atoms' elements that form bond TR000_2_3.
+SQL: SELECT T2.element FROM connected AS T1 INNER JOIN atom AS T2 ON T1.atom_id = T2.atom_id WHERE T1.bond_id = 'TR000_2_3'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 308
+DBid: toxicology
+QUESTION: How many bonds are created by bonding atoms with chlorine element?
+SQL: SELECT COUNT(T1.bond_id) FROM connected AS T1 INNER JOIN atom AS T2 ON T1.atom_id = T2.atom_id WHERE T2.element = 'cl'
+llmRESPONSE: toxicology: atom, bond
+
+Qid: 309
+DBid: toxicology
+QUESTION: List out the atom id that belongs to the TR346 molecule and how many bond type can be created by this molecule?
+SQL: SELECT T1.atom_id, COUNT(DISTINCT T2.bond_type),T1.molecule_id FROM atom AS T1 INNER JOIN bond AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.molecule_id = 'TR000' GROUP BY T1.atom_id, T2.bond_type
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 310
+DBid: toxicology
+QUESTION: How many molecules have a double bond type and among these molecule, how many are labeled as carcinogenic compound?
+SQL: SELECT COUNT(DISTINCT T2.molecule_id), SUM(CASE WHEN T2.label = '+' THEN 1 ELSE 0 END) FROM bond AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.bond_type = '='
+llmRESPONSE: toxicology: bond, molecule
+
+Qid: 311
+DBid: toxicology
+QUESTION: How many molecules without sulphur element is not having double bond?
+SQL: SELECT COUNT(DISTINCT T1.molecule_id) FROM atom AS T1 INNER JOIN bond AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element <> 's' AND T2.bond_type <> '='
+llmRESPONSE: toxicology: atom, bond, molecule
+
+Qid: 312
+DBid: toxicology
+QUESTION: What is the carcinogenic label for bond TR001_2_4?
+SQL: SELECT DISTINCT T2.label FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id INNER JOIN bond AS T3 ON T2.molecule_id = T3.molecule_id WHERE T3.bond_id = 'TR001_2_4'
+llmRESPONSE: toxicology: bond
+
+Qid: 313
+DBid: toxicology
+QUESTION: How many atoms belong to molecule id TR001?
+SQL: SELECT COUNT(T.atom_id) FROM atom AS T WHERE T.molecule_id = 'TR001'
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 314
+DBid: toxicology
+QUESTION: How many single bonds are there in the list?
+SQL: SELECT COUNT(T.bond_id) FROM bond AS T WHERE T.bond_type = '-'
+llmRESPONSE: toxicology: bond
+
+Qid: 315
+DBid: toxicology
+QUESTION: Among the molecules which contain "cl" element, which of them are carcinogenic?
+SQL: SELECT DISTINCT T1.molecule_id FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'cl' AND T2.label = '+'
+llmRESPONSE: toxicology: molecule, atom
+
+Qid: 316
+DBid: toxicology
+QUESTION: Among the molecules which contain "c" element, which of them are not carcinogenic?
+SQL: SELECT DISTINCT T1.molecule_id FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.element = 'c' AND T2.label = '-'
+llmRESPONSE: toxicology: atom, molecule, connected
+
+Qid: 317
+DBid: toxicology
+QUESTION: Calculate the percentage of carcinogenic molecules which contain the Chlorine element.
+SQL: SELECT COUNT(CASE WHEN T2.label = '+' AND T1.element = 'cl' THEN T2.molecule_id ELSE NULL END) * 100 / COUNT(T2.molecule_id) FROM atom AS T1 INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id
+llmRESPONSE: toxicology: atom, molecule
+
+Qid: 318
+DBid: toxicology
+QUESTION: What is the molecule id of bond id TR001_1_7?
+SQL: SELECT DISTINCT T1.molecule_id FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T2.bond_id = 'TR001_1_7'
+llmRESPONSE: toxicology: bond, molecule
+
