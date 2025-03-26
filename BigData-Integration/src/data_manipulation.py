@@ -63,6 +63,28 @@ def get_tables_from_SQLquery(sql_query: str) -> list[str]:
     return list(clean_tables)
 
 
+def get_entry_from_llmResponse(file: str):
+    
+    with open(paths.LLM_RESPONSE + "match_databases.txt", "r", encoding="utf-8") as file:
+        text = file.read()
+
+    pattern = re.findall(
+        r"Qid: (\d+)\nDBid: ([^\n]+)\nQUESTION: ([^\n]+)\nSQL: ([^\n]+)\nllmRESPONSE: ([^\n]+)", 
+        text
+    )
+    data = {
+        int(qid): {
+            "DBid": dbid.strip(),
+            "QUESTION": question.strip(),
+            "SQL": sql.strip(),
+            "llmRESPONSE": llmresp.strip(),
+        }
+        for qid, dbid, question, sql, llmresp in pattern
+    }
+    
+    return data
+    
+
 if __name__ == '__main__':
     
     query = "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333"
