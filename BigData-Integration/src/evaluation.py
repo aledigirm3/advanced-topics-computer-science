@@ -5,11 +5,27 @@ import paths
 from ansi_colors import *
 
 
-if __name__ == "__main__":
+def database_match_eval(filename: str):
+
+    data = get_entry_from_llmResponse(filename)
+
+    correct_pred = 0
+    total_entry = 0
+
+    for qid, entry in data.items():
+        entry_list = entry['llmRESPONSE'].split(", ")
+        if entry['DBid'] in entry_list:
+            correct_pred += 1
+
+        total_entry += 1
+
+    print(f"{GREEN}ACCURACY (db match): {RESET}{correct_pred/total_entry}")
+
+
+
+def table_match_eval(filename: str):
     
     original2name, name2original = get_db_dict_mapping(isTrain=False)
-    
-    filename = "match_tables.txt"
     data = get_entry_from_llmResponse(filename)
     
     tp = 0
@@ -47,3 +63,10 @@ if __name__ == "__main__":
     print(f"{GREEN}PRECISION: {RESET}{precision:.2f}")
     print(f"{GREEN}RECALL: {RESET}{recall:.2f}")
     print(f"{GREEN}F1-score: {RESET}{f1_score:.2f}")
+
+
+if __name__ == '__main__':
+
+    filename = "allminiLM_match_databases.txt"
+
+    database_match_eval(filename)
