@@ -1,0 +1,54 @@
+import os
+import sys
+from data_manipulation import get_db_dict_mapping, get_tables_from_SQLquery, get_entry_from_llmResponse
+
+### --------- ###
+prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(prv_folder)
+import paths
+from ansi_colors import *
+### --------- ###
+
+
+if __name__ == "__main__":
+    
+    original2name, name2original = get_db_dict_mapping(isTrain=False)
+    
+    filename = "match_tables.txt"
+    data = get_entry_from_llmResponse(filename)
+    
+    tp = 0
+    fp = 0
+    fn = 0
+    
+    
+    for qid, entry in data.items():
+        
+        truth_tables = get_tables_from_SQLquery(entry['SQL'])
+        
+        database, _, result = entry['llmRESPONSE'].partition(":")
+        
+        database = database.strip()
+        
+        predicted_tables_list = result.split(",")
+        predicted_tables = [item.strip() for item in predicted_tables_list]
+        
+        for table in predicted_tables:
+            
+            if name2original[database][table] in truth_tables:
+
+                tp += 1
+                truth_tables.remove(name2original[database][table])
+            else:
+                fp += 1
+                
+        fn += len(truth_tables)
+            
+        
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+    f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+    
+    print(f"{GREEN}PRECISION: {RESET}{precision:.2f}")
+    print(f"{GREEN}RECALL: {RESET}{recall:.2f}")
+    print(f"{GREEN}F1-score: {RESET}{f1_score:.2f}")
