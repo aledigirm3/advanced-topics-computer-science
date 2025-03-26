@@ -77,7 +77,7 @@ if __name__ == '__main__':
     original2name, name2original = get_db_dict_mapping(isTrain=False)
     
     filename = "match_databases.txt"
-    data = get_entry_from_llmResponse(paths.LLM_RESPONSE + filename)
+    data = get_entry_from_llmResponse(filename)
     
     filename = "match_tables.txt"
     with open(paths.LLM_RESPONSE + filename, "a", encoding="utf-8") as file:
