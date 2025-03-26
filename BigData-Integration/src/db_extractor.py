@@ -3,13 +3,8 @@ import sys
 import json
 from llm import query_groq
 from examples import findDB_example1DEV, findDB_example2DEV, findDB_example3DEV
-
-### --------- ###
-prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(prv_folder)
 import paths
 from ansi_colors import *
-### --------- ###
 
 
 def get_databases_from_query(query: str) -> str:

@@ -3,14 +3,9 @@ import os
 import sys
 import re
 from typing import Dict, Tuple
-
-
-### --------- ###
-prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(prv_folder)
 import paths
 from ansi_colors import *
-### --------- ###
+
 
 def get_db_dict_mapping(isTrain: bool=True) -> Tuple[Dict[str, Dict[str, str]], Dict[str, Dict[str, str]]]: 
     # -> ( {database, {table_name_original, table_name}}, {database, {table_name, table_name_original}} )
@@ -88,5 +83,5 @@ def get_entry_from_llmResponse(filename: str):
 if __name__ == '__main__':
     
     query = "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333"
-    print(get_tables_from_SQLquery(query))
+    print(get_db_dict_mapping(False))
     

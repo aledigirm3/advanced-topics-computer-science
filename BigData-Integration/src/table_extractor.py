@@ -5,13 +5,8 @@ from llm import query_groq
 from data_manipulation import get_db_dict_mapping
 from data_manipulation import get_entry_from_llmResponse
 from examples import findTables_example1DEV, findTables_example2DEV, findTables_example3DEV
-
-### --------- ###
-prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(prv_folder)
 import paths
 from ansi_colors import *
-### --------- ###
 
 
 def get_tables_from_query(query: str, db1: str, db2: str, db3: str) -> str:

@@ -1,13 +1,8 @@
 import os
 import sys
 from data_manipulation import get_db_dict_mapping, get_tables_from_SQLquery, get_entry_from_llmResponse
-
-### --------- ###
-prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(prv_folder)
 import paths
 from ansi_colors import *
-### --------- ###
 
 
 if __name__ == "__main__":
