@@ -1,9 +1,11 @@
 import re
 import os
 import sys
+
+prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(prv_folder)
 from llm import query_groq
-from data_manipulation import get_db_dict_mapping
-from data_manipulation import get_entry_from_llmResponse
+from data_manipulation import get_db_dict_mapping, get_entry_from_llmResponse
 from examples import findTables_example1DEV, findTables_example2DEV, findTables_example3DEV
 import paths
 from ansi_colors import *
@@ -62,11 +64,11 @@ def get_tables_from_query(query: str, db1: str, db2: str, db3: str) -> str:
 
 if __name__ == '__main__':
     
-    if not os.path.exists(paths.LLM_RESPONSE):
+    if not os.path.exists('../' + paths.LLM_RESPONSE):
         os.makedirs(paths.LLM_RESPONSE)
-        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} created.")
+        print(f"{CYAN}'../{paths.LLM_RESPONSE}'{RESET} created.")
     else:
-        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} already exist.")
+        print(f"{CYAN}'../{paths.LLM_RESPONSE}'{RESET} already exist.")
 
     
     original2name, name2original = get_db_dict_mapping(isTrain=False)
@@ -75,7 +77,7 @@ if __name__ == '__main__':
     data = get_entry_from_llmResponse(filename)
     
     filename = "match_tables.txt"
-    with open(paths.LLM_RESPONSE + filename, "a", encoding="utf-8") as file:
+    with open('../' + paths.LLM_RESPONSE + filename, "a", encoding="utf-8") as file:
         for qid, entry in data.items():
             db1= ""
             db2 = ""

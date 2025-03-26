@@ -1,6 +1,9 @@
 import os
 import sys
 import json
+
+prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(prv_folder)
 from llm import query_groq
 from examples import findDB_example1DEV, findDB_example2DEV, findDB_example3DEV
 import paths
@@ -53,20 +56,20 @@ def get_databases_from_query(query: str) -> str:
 
 if __name__ == '__main__':
 
-    if not os.path.exists(paths.LLM_RESPONSE):
+    if not os.path.exists('../' + paths.LLM_RESPONSE):
         os.makedirs(paths.LLM_RESPONSE)
-        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} created.")
+        print(f"{CYAN}'../{paths.LLM_RESPONSE}'{RESET} created.")
     else:
-        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} already exist.")
+        print(f"{CYAN}'../{paths.LLM_RESPONSE}'{RESET} already exist.")
     
     filename = "match_databases.txt"
 
-    queries = paths.DEV + 'dev.json'
+    queries = '../' + paths.DEV + 'dev.json'
     
     with open(queries, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    with open(paths.LLM_RESPONSE + filename, "a", encoding="utf-8") as file:
+    with open('../' + paths.LLM_RESPONSE + filename, "a", encoding="utf-8") as file:
         space = "" 
 
         for query_block in data:
