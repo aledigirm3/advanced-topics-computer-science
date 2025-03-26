@@ -63,9 +63,9 @@ def get_tables_from_SQLquery(sql_query: str) -> list[str]:
     return list(clean_tables)
 
 
-def get_entry_from_llmResponse(file: str):
+def get_entry_from_llmResponse(filename: str):
     
-    with open(paths.LLM_RESPONSE + "match_databases.txt", "r", encoding="utf-8") as file:
+    with open(paths.LLM_RESPONSE + filename, "r", encoding="utf-8") as file:
         text = file.read()
 
     pattern = re.findall(
