@@ -66,9 +66,9 @@ if __name__ == '__main__':
     
     if not os.path.exists('../' + paths.LLM_RESPONSE):
         os.makedirs(paths.LLM_RESPONSE)
-        print(f"{CYAN}'../{paths.LLM_RESPONSE}'{RESET} created.")
+        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} created.")
     else:
-        print(f"{CYAN}'../{paths.LLM_RESPONSE}'{RESET} already exist.")
+        print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} already exist.")
 
     
     original2name, name2original = get_db_dict_mapping(isTrain=False)
