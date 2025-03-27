@@ -25,7 +25,8 @@ def database_match_eval(filename: str):
 
 def table_match_eval(filename: str):
     
-    original2name, name2original = get_db_dict_mapping(isTrain=False)
+    original2name, name2original = get_db_dict_mapping(paths.DEV + 'dev_tables.json')
+    
     data = get_entry_from_llmResponse(filename)
     
     tp = 0
@@ -34,7 +35,6 @@ def table_match_eval(filename: str):
     
     
     for qid, entry in data.items():
-        
         truth_tables = get_tables_from_SQLquery(entry['SQL'])
         
         database, _, result = entry['llmRESPONSE'].partition(":")
