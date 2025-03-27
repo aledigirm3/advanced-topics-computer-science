@@ -4,11 +4,15 @@ import os
 #==============.env for llm=====================
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv(dotenv_path=Path('../../.env'))
+
+current_dir = Path(__file__).parent
+env_path = current_dir / "../.env"
+load_dotenv(dotenv_path=env_path)
 #===============================================
 
+api_key = os.environ.get("MARC_API_KEY")
 client = Groq(
-    api_key=os.environ.get("RAI_API_KEY"),
+    api_key=api_key,
 )
 
 def query_groq(messages: list, model: str = "llama-3.3-70b-versatile", temperature: float = 1):
