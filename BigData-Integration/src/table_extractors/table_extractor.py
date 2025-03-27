@@ -71,9 +71,9 @@ if __name__ == '__main__':
         print(f"{CYAN}'{paths.LLM_RESPONSE}'{RESET} already exist.")
 
     
-    original2name, name2original = get_db_dict_mapping(isTrain=False)
+    original2name, name2original = get_db_dict_mapping(f"../{paths.DEV}dev_tables.json")
     
-    filename = "match_databases.txt"
+    filename = "../" + paths.LLM_RESPONSE + "match_databases.txt"
     data = get_entry_from_llmResponse(filename)
     
     filename = "match_tables.txt"

@@ -7,14 +7,10 @@ import paths
 from ansi_colors import *
 
 
-def get_db_dict_mapping(isTrain: bool=True) -> Tuple[Dict[str, Dict[str, str]], Dict[str, Dict[str, str]]]: 
+def get_db_dict_mapping(filename: str) -> Tuple[Dict[str, Dict[str, str]], Dict[str, Dict[str, str]]]: 
     # -> ( {database, {table_name_original, table_name}}, {database, {table_name, table_name_original}} )
 
-    if isTrain:
-        tabs = paths.TRAIN + 'train_tables.json'
-    else:
-        tabs = paths.DEV + 'dev_tables.json'
-    with open(tabs, "r", encoding="utf-8") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
         
     original2name_dict = {}
@@ -60,7 +56,7 @@ def get_tables_from_SQLquery(sql_query: str) -> list[str]:
 
 def get_entry_from_llmResponse(filename: str):
     
-    with open(paths.LLM_RESPONSE + filename, "r", encoding="utf-8") as file:
+    with open(filename, "r", encoding="utf-8") as file:
         text = file.read()
 
     pattern = re.findall(

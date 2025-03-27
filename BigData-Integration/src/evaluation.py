@@ -67,6 +67,6 @@ def table_match_eval(filename: str):
 
 if __name__ == '__main__':
 
-    filename = "allminiLM_match_databases.txt"
+    filename = paths.LLM_RESPONSE + "match_tables.txt"
 
-    database_match_eval(filename)
+    table_match_eval(filename)
