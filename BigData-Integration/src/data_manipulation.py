@@ -7,6 +7,26 @@ import paths
 from ansi_colors import *
 
 
+def get_db_dict(filename: str) -> Dict[str, Dict[str, list]]: # -> {database, {table_name, [col1, col2, ...]}}
+
+    with open(filename, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    for db in data:
+
+        tables_dict = {table: [] for table in db["table_names"]}
+
+        for col in db["column_names_original"]:
+            table_index, column_name = col
+            if table_index != -1:
+                 tables_dict[db["table_names"][table_index]].append(column_name)
+
+        db_dict = {db["db_id"]: tables_dict}
+        print(db_dict)
+        print('\n\n')
+
+
+
 def get_db_dict_mapping(filename: str) -> Tuple[Dict[str, Dict[str, str]], Dict[str, Dict[str, str]]]: 
     # -> ( {database, {table_name_original, table_name}}, {database, {table_name, table_name_original}} )
 
@@ -78,6 +98,8 @@ def get_entry_from_llmResponse(filename: str):
 
 if __name__ == '__main__':
     
-    query = "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333"
-    print(get_db_dict_mapping(False))
+    #query = "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333"
+    #print(get_db_dict_mapping(False))
+
+    get_db_dict(paths.DEV + 'dev_tables.json')
     
