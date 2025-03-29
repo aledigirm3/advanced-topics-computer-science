@@ -4,7 +4,7 @@ import sys
 
 prv_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(prv_folder)
-# from llm import query_groq
+from llm import query_groq
 from data_manipulation import get_db_dict_mapping, get_entry_from_llmResponse, get_db_dict
 from examples import att_findTables_example1DEV, att_findTables_example2DEV
 import paths
@@ -18,9 +18,9 @@ def get_tables_from_query(query: str, db1: str, db2: str, db3: str) -> str:
     
     Args:
         query (str): Natural language query.
-        db1 (str): database 1 with associated tables
-        db2 (str): database 2 with associated tables
-        db2 (str): database 3 with associated tables
+        db1 (str): database 1 with associated tables and attributes
+        db2 (str): database 2 with associated tables and attributes
+        db2 (str): database 3 with associated tables and attributes
         
     Returns:
         str: relevant tables.
@@ -30,8 +30,8 @@ def get_tables_from_query(query: str, db1: str, db2: str, db3: str) -> str:
     Given a natural language query and three databases with their respective tables and attributes, your task is to determine which tables 
     are necessary to satisfy the query. Ensure that all selected tables are 
     relevant and sufficient to retrieve the required information (reply only relevant tables and relevant attributes of the chosen tables).
-    YOu MUST TAKE TABLES (and attributes) FROM ONLY ONE DATABASE.
-    The form of the answer must be as follows: database: table(att, att,..), table(att,..)
+    YOU MUST TAKE TABLES (and attributes) FROM ONLY ONE DATABASE.
+    The form of the answer must be as follows: database: table(att, att,..), table(att,..). YOU MUST RESPECT ONLY THIS FORM.
     (all attributes are separated by comma)
 
     
@@ -50,7 +50,7 @@ def get_tables_from_query(query: str, db1: str, db2: str, db3: str) -> str:
                 {db2}
                 {db3}"""
 
-'''
+
     return query_groq(messages=[
         {
             "role": "system",
@@ -61,7 +61,7 @@ def get_tables_from_query(query: str, db1: str, db2: str, db3: str) -> str:
             "content": content
         }
     ])
-'''
+
 
 if __name__ == '__main__':
     
@@ -103,6 +103,7 @@ if __name__ == '__main__':
             file.write(f"DBid: {entry['DBid']}\n")
             file.write(f"QUESTION: {entry['QUESTION']}\n")
             file.write(f"SQL: {entry['SQL']}\n")
-            file.write(f"llmRESPONSE: {response}\n\n")
+            file.write(f"llmRESPONSE: {response}\n")
+            file.write(f"attributes: {entry['attributes']}\n\n")
 
             file.flush()
