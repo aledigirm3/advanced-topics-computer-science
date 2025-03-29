@@ -88,3 +88,19 @@ findTables_example3DEV = TablesExtractorExample(
     database3="financial: account, card, client, disposition, district, loan, order, transaction",
     answer="california_schools: free and reduced-price meals"
 )
+
+att_findTables_example1DEV = TablesExtractorExample(
+    query="List the heroes' names whose eyes and hair colours are both black.",
+    database1="superhero: alignment(id, alignment), attribute(id, attribute_name), colour(id, colour), gender(id, gender), publisher(id, publisher_name), race(id, race), superhero(id, superhero_name, full_name, gender_id, eye_colour_id, hair_colour_id, skin_colour_id, race_id, publisher_id, alignment_id, height_cm, weight_kg), hero attribute(hero_id, attribute_id, attribute_value), superpower(id, power_name), hero power(hero_id, power_id)",
+    database2="codebase_community: badges(Id, UserId, Name, Date), comments(Id, PostId, Score, Text, CreationDate, UserId, UserDisplayName), post History(Id, PostHistoryTypeId, PostId, RevisionGUID, CreationDate, UserId, Text, Comment, UserDisplayName), post Links(Id, CreationDate, PostId, RelatedPostId, LinkTypeId), tags(Id, TagName, Count, ExcerptPostId, WikiPostId), users(Id, Reputation, CreationDate, DisplayName, LastAccessDate, WebsiteUrl, Location, AboutMe, Views, UpVotes, DownVotes, AccountId, Age, ProfileImageUrl), votes(Id, PostId, VoteTypeId, CreationDate, UserId, BountyAmount)",
+    database3="student_club: Event(event_id, event_name, event_date, type, notes, location, status), Major(major_id, major_name, department, college), Zip Code(zip_code, type, city, county, state, short_state), Attendance(link_to_event, link_to_member), Budget(budget_id, category, spent, remaining, amount, event_status, link_to_event), Expense(expense_id, expense_description, expense_date, cost, approved, link_to_member, link_to_budget), Income(income_id, date_received, amount, source, notes, link_to_member), Member(member_id, first_name, last_name, email, position, t_shirt_size, phone, zip, link_to_major)",
+    answer="superhero: superhero(superhero_name, eye_colour_id, hair_colour_id), colour(id, colour)"
+)
+
+att_findTables_example2DEV = TablesExtractorExample(
+    query="How many users last accessed the website after 2014/9/1?",
+    database1="debit_card_specializing: customers(CustomerID, Segment, Currency), gas stations(GasStationID, ChainID, Country, Segment), products(ProductID, Description), transactions(TransactionID, Date, Time, CustomerID, CardID, GasStationID, ProductID, Amount, Price), year and month(CustomerID, Date, Consumption)",
+    database2="codebase_community: badges(Id, UserId, Name, Date), comments(Id, PostId, Score, Text, CreationDate, UserId, UserDisplayName), post History(Id, PostHistoryTypeId, PostId, RevisionGUID, CreationDate, UserId, Text, Comment, UserDisplayName), post Links(Id, CreationDate, PostId, RelatedPostId, LinkTypeId), tags(Id, TagName, Count, ExcerptPostId, WikiPostId), users(Id, Reputation, CreationDate, DisplayName, LastAccessDate, WebsiteUrl, Location, AboutMe, Views, UpVotes, DownVotes, AccountId, Age, ProfileImageUrl), votes(Id, PostId, VoteTypeId, CreationDate, UserId, BountyAmount)",
+    database3="student_club: Event(event_id, event_name, event_date, type, notes, location, status), Major(major_id, major_name, department, college), Zip Code(zip_code, type, city, county, state, short_state), Attendance(link_to_event, link_to_member), Budget(budget_id, category, spent, remaining, amount, event_status, link_to_event), Expense(expense_id, expense_description, expense_date, cost, approved, link_to_member, link_to_budget), Income(income_id, date_received, amount, source, notes, link_to_member), Member(member_id, first_name, last_name, email, position, t_shirt_size, phone, zip, link_to_major)",
+    answer="codebase_community: users(Id, LastAccessDate)"
+)
