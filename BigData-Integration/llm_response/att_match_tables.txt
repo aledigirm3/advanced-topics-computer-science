@@ -1,0 +1,405 @@
+Qid: 2
+DBid: california_schools
+QUESTION: Please list the zip code of all the charter schools in Fresno County Office of Education.
+SQL: SELECT T2.Zip FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T1.`District Name` = 'Fresno County Office of Education' AND T1.`Charter School (Y/N)` = 1
+llmRESPONSE: california_schools: schools(CDSCode, County, District, School, Zip, Charter)
+attributes: Zip, CDSCode, CDSCode, District Name, Charter School (Y/N)
+
+Qid: 71
+DBid: california_schools
+QUESTION: What is the district code for the School that does not offer a magnet program in the city of Fresno?
+SQL: SELECT T1.`District Code` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.City = 'Fresno' AND T2.Magnet = 0
+llmRESPONSE: california_schools: schools(District, City, Magnet)
+attributes: District Code, CDSCode, CDSCode, City, Magnet
+
+Qid: 79
+DBid: california_schools
+QUESTION: Between San Diego and Santa Barbara, which county offers the most number of schools that does not offer physical building? Indicate the amount.
+SQL: SELECT County, COUNT(Virtual) FROM schools WHERE (County = 'San Diego' OR County = 'Santa Barbara') AND Virtual = 'F' GROUP BY County ORDER BY COUNT(Virtual) DESC LIMIT 1
+llmRESPONSE: california_schools: schools(County, City, Virtual), Zip Code(County, city)
+attributes: County, Virtual
+
+Qid: 82
+DBid: california_schools
+QUESTION: What is the grade span offered in the school with the highest longitude?
+SQL: SELECT GSoffered FROM schools ORDER BY ABS(longitude) DESC LIMIT 1
+llmRESPONSE: california_schools: schools(Low Grade, High Grade, Longitude)
+attributes: GSoffered,longitude
+
+Qid: 88
+DBid: california_schools
+QUESTION: What is the administrator's email address for the school with the highest number of test takers who received SAT scores of at least 1500?Provide the name of the school.
+SQL: SELECT T2.AdmEmail1, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1
+llmRESPONSE: california_schools: sat_scores(cds, NumTstTakr, sname), schools(CDSCode, School, AdmEmail1)
+attributes: AdmEmail1, School, cds, CDSCode, NumGE1500
+
+Qid: 96
+DBid: financial
+QUESTION: How many customers who choose statement of weekly issuance are Owner?
+SQL: SELECT COUNT(T1.account_id) FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T2.type = 'OWNER' AND T1.frequency = 'POPLATEK TYDNE'
+llmRESPONSE: financial: account(account_id, frequency), client(client_id, gender)
+attributes: account_id, account_id, type, frequency
+
+Qid: 97
+DBid: financial
+QUESTION: List out the id number of client who choose statement of issuance after transaction are Disponent?
+SQL: SELECT T2.client_id FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id WHERE T1.frequency = 'POPLATEK PO OBRATU' AND T2.type = 'DISPONENT'
+llmRESPONSE: financial: disposition(disp_id, client_id, type), transaction(trans_id, account_id, type, operation), client(client_id, district_id)
+attributes: client_id, account_id, account_id, frequency, type
+
+Qid: 105
+DBid: financial
+QUESTION: There was a loan approved in 1994/8/25, where was that account opened, give the district Id of the branch.
+SQL: SELECT T1.district_id FROM account AS T1 INNER JOIN loan AS T2 ON T1.account_id = T2.account_id WHERE T2.date = '1994-08-25'
+llmRESPONSE: financial: loan(loan_id, account_id, date, status), account(account_id, district_id)
+attributes: district_id, account_id, account_id, date
+
+Qid: 107
+DBid: financial
+QUESTION: What is the gender of the oldest client who opened his/her account in the highest average salary branch?
+SQL: SELECT T2.gender FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id ORDER BY T1.A11 DESC, T2.birth_date ASC LIMIT 1
+llmRESPONSE: financial: client(gender, birth_date), account(account_id, district_id, date), district(district_id, A10)
+attributes: gender, district_id, district_id, A11, birth_date
+
+Qid: 117
+DBid: financial
+QUESTION: What is the percentage of loan amount that has been fully paid with no issue.
+SQL: SELECT (CAST(SUM(CASE WHEN status = 'A' THEN amount ELSE 0 END) AS REAL) * 100) / SUM(amount) FROM loan
+llmRESPONSE: financial: loan(loan_id, amount, status)
+attributes: status, amount
+
+Qid: 143
+DBid: financial
+QUESTION: What are the accounts that have gold credit cards?
+SQL: SELECT T2.account_id FROM disp AS T2  INNER JOIN card AS T1 ON T1.disp_id = T2.disp_id  WHERE T1.type = 'gold'
+llmRESPONSE: financial: disposition(disp_id, client_id, account_id, type), card(card_id, disp_id, type, issued)
+attributes: account_id, disp_id, disp_id, type
+
+Qid: 155
+DBid: financial
+QUESTION: How many percent of 'Gold' cards were issued prior to 1998?
+SQL: SELECT CAST(SUM(type = 'gold' AND STRFTIME('%Y', issued) < '1998') AS REAL) * 100 / COUNT(card_id) FROM card
+llmRESPONSE: financial: card(card_id, type, issued)
+attributes: type, card_id, issued
+
+Qid: 195
+DBid: toxicology
+QUESTION: What is the most common bond type?
+SQL: SELECT T.bond_type FROM ( SELECT bond_type, COUNT(bond_id) FROM bond GROUP BY bond_type ORDER BY COUNT(bond_id) DESC LIMIT 1 ) AS T
+llmRESPONSE: toxicology: bond(bond_id, bond_type), molecule(molecule_id, label)
+attributes: bond_type, bond_id
+
+Qid: 202
+DBid: toxicology
+QUESTION: How many triple type bonds are there?
+SQL: SELECT COUNT(T.bond_id) FROM bond AS T WHERE T.bond_type = '#'
+llmRESPONSE: toxicology: bond(bond_id, bond_type), molecule(molecule_id)
+attributes: bond_id, bond_type
+
+Qid: 203
+DBid: toxicology
+QUESTION: In how many atoms is there no bromine?
+SQL: SELECT COUNT(DISTINCT T.atom_id) FROM atom AS T WHERE T.element <> 'br'
+llmRESPONSE: toxicology: molecule(molecule_id, label), atom(atom_id, molecule_id, element)
+attributes: atom_id, element
+
+Qid: 206
+DBid: toxicology
+QUESTION: What elements are in the TR004_8_9 bond atoms?
+SQL: SELECT DISTINCT T1.element FROM atom AS T1 INNER JOIN connected AS T2 ON T1.atom_id = T2.atom_id WHERE T2.bond_id = 'TR004_8_9'
+llmRESPONSE: toxicology: molecule(molecule_id, label), connected(atom_id, atom_id2, bond_id), atom(atom_id, molecule_id, element)
+attributes: element, atom_id, atom_id, bond_id
+
+Qid: 210
+DBid: toxicology
+QUESTION: What atoms are connected in single type bonds?
+SQL: SELECT T2.atom_id, T2.atom_id2 FROM bond AS T1 INNER JOIN connected AS T2 ON T1.bond_id = T2.bond_id WHERE T1.bond_type = '-'
+llmRESPONSE: toxicology: connected(atom_id, atom_id2, bond_id), bond(bond_id, molecule_id, bond_type)
+attributes: atom_id, atom_id2, bond_id, bond_id, bond_type
+
+Qid: 343
+DBid: card_games
+QUESTION: Name all cards with 2015 frame style ranking below 100 on EDHRec.
+SQL: SELECT id FROM cards WHERE edhrecRank < 100 AND frameVersion = 2015
+llmRESPONSE: card_games: cards(name, edhrecRank, frameVersion)
+attributes: id, edhrecRank, frameVersion
+
+Qid: 351
+DBid: card_games
+QUESTION: Name all the cards which have alternative language in Japanese.
+SQL: SELECT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
+llmRESPONSE: card_games: cards(name), foreign data(language, name)
+attributes: name, foreign_data, uuid, uuid, language
+
+Qid: 353
+DBid: card_games
+QUESTION: List all the sets available in Italian translation. State the total number of cards per set.
+SQL: SELECT T1.name, T1.totalSetSize FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Italian'
+llmRESPONSE: card_games: sets(id, name, totalSetSize), set translations(id, language, setCode, translation)
+attributes: name, totalSetSize, code, setCode, language
+
+Qid: 355
+DBid: card_games
+QUESTION: What is the keyword found on card 'Angel of Mercy'?
+SQL: SELECT DISTINCT keywords FROM cards WHERE name = 'Angel of Mercy'
+llmRESPONSE: card_games: cards(name, keywords)
+attributes: keywords, name
+
+Qid: 357
+DBid: card_games
+QUESTION: What type of promotion is of card 'Duress'?
+SQL: SELECT promoTypes FROM cards WHERE name = 'Duress' AND promoTypes IS NOT NULL
+llmRESPONSE: card_games: cards(name, promoTypes)
+attributes: promoTypes, name
+
+Qid: 552
+DBid: codebase_community
+QUESTION: Please list the names of the badges obtained by csgillespie.
+SQL: SELECT T1.`Name` FROM badges AS T1 INNER JOIN users AS T2 ON T1.UserId = T2.Id WHERE T2.DisplayName = 'csgillespie'
+llmRESPONSE: codebase_community: badges(Name, UserId), users(Id, DisplayName)
+attributes: Name, UserId, Id, DisplayNam
+
+Qid: 559
+DBid: codebase_community
+QUESTION: Indicate the creation date of the maximum number of votes.
+SQL: SELECT CreationDate FROM votes GROUP BY CreationDate ORDER BY COUNT(Id) DESC LIMIT 1
+llmRESPONSE: codebase_community: votes(CreationDate, Id), posts(Id, PostTypeId)
+attributes: CreationDate, Id
+
+Qid: 560
+DBid: codebase_community
+QUESTION: Give the number of "Revival" badges.
+SQL: SELECT COUNT(Id) FROM badges WHERE Name = 'Revival'
+llmRESPONSE: codebase_community: badges(Id, Name)
+attributes: Id, Name
+
+Qid: 568
+DBid: codebase_community
+QUESTION: Provide the display name of the user who made the vote No.6347.
+SQL: SELECT T1.DisplayName FROM users AS T1 INNER JOIN votes AS T2 ON T1.Id = T2.UserId WHERE T2.Id = 6347
+llmRESPONSE: codebase_community: votes(Id, UserId), users(Id, DisplayName)
+attributes: DisplayName, Id, UserId, Id
+
+Qid: 745
+DBid: superhero
+QUESTION: Give the publisher ID of Star Trek.
+SQL: SELECT id FROM publisher WHERE publisher_name = 'Star Trek'
+llmRESPONSE: superhero: superhero(superhero_name, publisher_id), publisher(id, publisher_name)
+attributes: id, publisher_name
+
+Qid: 746
+DBid: superhero
+QUESTION: Calculate the average attribute value of all superheroes.
+SQL: SELECT AVG(attribute_value) FROM hero_attribute
+llmRESPONSE: superhero: hero attribute(attribute_id, attribute_value)
+attributes: attribute_value
+
+Qid: 747
+DBid: superhero
+QUESTION: What is the total number of superheroes without full name?
+SQL: SELECT COUNT(id) FROM superhero WHERE full_name IS NULL
+llmRESPONSE: superhero: superhero(id, full_name)
+attributes: id, full_name
+
+Qid: 752
+DBid: superhero
+QUESTION: Give the name of the alien superheroes.
+SQL: SELECT T1.superhero_name FROM superhero AS T1 INNER JOIN race AS T2 ON T1.race_id = T2.id WHERE T2.race = 'Alien'
+llmRESPONSE: superhero: superhero(superhero_name, race_id), race(id, race)
+attributes: superhero_name, race_id, id, race
+
+Qid: 762
+DBid: superhero
+QUESTION: Which power do superheroes have the most of?
+SQL: SELECT T2.power_name FROM hero_power AS T1 INNER JOIN superpower AS T2 ON T1.power_id = T2.id GROUP BY T2.power_name ORDER BY COUNT(T1.hero_id) DESC LIMIT 1
+llmRESPONSE: superhero: superpower(id, power_name), hero power(hero_id, power_id)
+attributes: power_name, power_id, id, hero_id
+
+Qid: 918
+DBid: formula_1
+QUESTION: What's Lewis Hamilton's reference name?
+SQL: SELECT driverRef FROM drivers WHERE forename = 'Lewis' AND surname = 'Hamilton'
+llmRESPONSE: formula_1: drivers(driverId, driverRef, forename, surname)
+attributes: driverRef, forename, surname
+
+Qid: 920
+DBid: formula_1
+QUESTION: Please list all the years that Silverstone Circuit was used in a Formula_1 race.
+SQL: SELECT DISTINCT T2.year FROM circuits AS T1 INNER JOIN races AS T2 ON T2.circuitID = T1.circuitId WHERE T1.name = 'Silverstone Circuit'
+llmRESPONSE: formula_1: circuits(circuitId, name), races(year, circuitId)
+attributes: year, circuitID, circuitId, name
+
+Qid: 937
+DBid: formula_1
+QUESTION: What's the finish time for the driver who ranked second in 2008's AustChineseralian Grand Prix?
+SQL: SELECT T1.time FROM results AS T1 INNER JOIN races AS T2 on T1.raceId = T2.raceId WHERE T1.rank = 2 AND T2.name = 'Chinese Grand Prix' AND T2.year = 2008
+llmRESPONSE: formula_1: results(resultId, raceId, driverId, position, time), races(raceId, year, name)
+attributes: time, raceId, rank, name, year
+
+Qid: 941
+DBid: formula_1
+QUESTION: How many points did Lewis Hamilton get in total in all the Formula_1 races he participated?
+SQL: SELECT SUM(T2.points) FROM drivers AS T1 INNER JOIN results AS T2 ON T1.driverId = T2.driverId WHERE T1.forename = 'Lewis' AND T1.surname = 'Hamilton'
+llmRESPONSE: formula_1: drivers(driverId, forename, surname), results(raceId, driverId, points)
+attributes: points, driverId, driverId, forename, surname
+
+Qid: 945
+DBid: formula_1
+QUESTION: How many circuits are there in Adelaide, Australia?
+SQL: SELECT COUNT(circuitId) FROM circuits WHERE location = 'Adelaide' AND country = 'Australia'
+llmRESPONSE: formula_1: circuits(name, location, country)
+attributes: circuitId, location, country
+
+Qid: 946
+DBid: formula_1
+QUESTION: Please list the location coordinates of the US circuits.
+SQL: SELECT lat, lng FROM circuits WHERE country = 'USA'
+llmRESPONSE: formula_1: circuits(lat, lng, location)
+attributes: lat, lng, country
+
+Qid: 1020
+DBid: european_football_2
+QUESTION: Which player has the highest overall rating? Indicate the player's api id.
+SQL: SELECT player_api_id FROM Player_Attributes ORDER BY overall_rating DESC LIMIT 1
+llmRESPONSE: european_football_2: Player Attributes(player_api_id, overall_rating)
+attributes: player_api_id, overall_rating
+
+Qid: 1021
+DBid: european_football_2
+QUESTION: What is the height of the tallest player? Indicate his name.
+SQL: SELECT player_name FROM Player ORDER BY height DESC LIMIT 1
+llmRESPONSE: european_football_2: Player(height, player_name)
+attributes: player_name, height
+
+Qid: 1024
+DBid: european_football_2
+QUESTION: Who are the top 5 players who perform better in crossing actions? Indicate their player id.
+SQL: SELECT id FROM Player_Attributes ORDER BY crossing DESC LIMIT 5
+llmRESPONSE: european_football_2: Player Attributes(id, crossing), Player(id, player_api_id)
+attributes: id, crossing
+
+Qid: 1099
+DBid: european_football_2
+QUESTION: Which foot is preferred by Abdou Diallo?
+SQL: SELECT DISTINCT t2.preferred_foot FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id WHERE t1.player_name = 'Abdou Diallo'
+llmRESPONSE: european_football_2: Player(player_name), Player Attributes(preferred_foot)
+attributes: preferred_foot, player_api_id, player_api_id, player_name
+
+Qid: 1117
+DBid: european_football_2
+QUESTION: What are the player api id of 10 heaviest players?
+SQL: SELECT player_api_id FROM Player ORDER BY weight DESC LIMIT 10
+llmRESPONSE: european_football_2: Player(player_api_id, weight)
+attributes: player_api_id, weight
+
+Qid: 1249
+DBid: thrombosis_prediction
+QUESTION: Please list the disease names of the patients that have a proteinuria level higher than normal.
+SQL: SELECT T1.Diagnosis FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.`U-PRO` >= 30
+llmRESPONSE: thrombosis_prediction: Patient(ID, Diagnosis), Laboratory(ID, U-PRO)
+attributes: Diagnosis, ID, ID, U-PRO
+
+Qid: 1250
+DBid: thrombosis_prediction
+QUESTION: Which patient has a normal proteinuria level and is diagnosed with SLE? Please give his or her patient ID.
+SQL: SELECT DISTINCT T1.ID FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.`U-PRO` > 0 AND T2.`U-PRO` < 30 AND T1.Diagnosis = 'SLE'
+llmRESPONSE: thrombosis_prediction: Patient(ID, Diagnosis), Laboratory(ID, U-PRO, Diagnosis)
+attributes: ID, ID, U-PRO, Diagnosis
+
+Qid: 1254
+DBid: thrombosis_prediction
+QUESTION: How many patients with a normal Ig A level came to the hospital after 1990/1/1?
+SQL: SELECT COUNT(T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.IGA BETWEEN 80 AND 500 AND  strftime('%Y',  T1.`First Date`) > '1990'
+llmRESPONSE: thrombosis_prediction: Patient(ID, First Date), Laboratory(ID, Date, IGA)
+attributes: ID, ID, IGA, First Date
+
+Qid: 1261
+DBid: thrombosis_prediction
+QUESTION: How many patients with a normal RF don't have thrombosis?
+SQL: SELECT COUNT(DISTINCT T1.ID) FROM Examination AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.RF < 20 AND T1.Thrombosis = 0
+llmRESPONSE: thrombosis_prediction: Patient(ID), Laboratory(ID, RF), Examination(ID, Thrombosis)
+attributes: ID, ID, RF, Thrombosis
+
+Qid: 1276
+DBid: thrombosis_prediction
+QUESTION: For the patients who have an abnormal level of anti-DNA, please list the diseases they are diagnosed with.
+SQL: SELECT DISTINCT(T1.Diagnosis) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.DNA >= 8
+llmRESPONSE: thrombosis_prediction: Patient(ID, Diagnosis), Laboratory(ID, DNA)
+attributes: Diagnosis, ID, ID, DNA
+
+Qid: 1373
+DBid: student_club
+QUESTION: How many of the members' hometowns are from Maryland state?
+SQL: SELECT COUNT(T2.member_id) FROM zip_code AS T1 INNER JOIN member AS T2 ON T1.zip_code = T2.zip WHERE T1.state = 'Maryland'
+llmRESPONSE: student_club: Member(member_id, zip), Zip Code(zip_code, state)
+attributes: member_id, zip_code, zip, state
+
+Qid: 1374
+DBid: student_club
+QUESTION: How many events did the member with the phone number "954-555-6240" attend?
+SQL: SELECT COUNT(T2.link_to_event) FROM member AS T1 INNER JOIN attendance AS T2 ON T1.member_id = T2.link_to_member WHERE T1.phone = '954-555-6240'
+llmRESPONSE: student_club: Member(member_id, phone), Attendance(link_to_event, link_to_member)
+attributes: link_to_event, member_id, link_to_member, phone
+
+Qid: 1377
+DBid: student_club
+QUESTION: How many student have the position of president?
+SQL: SELECT COUNT(member_id) FROM member WHERE position = 'President'
+llmRESPONSE: student_club: Member(member_id, position)
+attributes: member_id, position
+
+Qid: 1378
+DBid: student_club
+QUESTION: What is the highest amount of budget spend for an event?
+SQL: SELECT MAX(spent) FROM budget
+llmRESPONSE: california_schools: schools(CDSCode, County, District, School), free and reduced-price meals(CDSCode, Enrollment, Free Meal Count, FRPM Count)
+attributes: spent
+
+Qid: 1379
+DBid: student_club
+QUESTION: How many meeting events were held in 2020?
+SQL: SELECT COUNT(event_id) FROM event WHERE type = 'Meeting' AND SUBSTR(event_date, 1, 4) = '2020'
+llmRESPONSE: student_club: Event(event_date, type)
+attributes: event_id, type, event_date
+
+Qid: 1380
+DBid: student_club
+QUESTION: What is the total amount of money spent for food?
+SQL: SELECT SUM(spent) FROM budget WHERE category = 'Food'
+llmRESPONSE: financial: transaction(trans_id, account_id, date, type, operation, amount, balance, k_symbol, bank, account), order(order_id, account_id, bank_to, account_to, amount, k_symbol)
+attributes: spent, category
+
+Qid: 1483
+DBid: debit_card_specializing
+QUESTION: How much did customer 6 consume in total between August and November 2013?
+SQL: SELECT SUM(Consumption) FROM yearmonth WHERE CustomerID = 6 AND Date BETWEEN '201308' AND '201311'
+llmRESPONSE: debit_card_specializing: year and month(CustomerID, Date, Consumption)
+attributes: Consumption, CustomerID, Date
+
+Qid: 1484
+DBid: debit_card_specializing
+QUESTION: How many more "discount" gas stations does the Czech Republic have compared to Slovakia?
+SQL: SELECT SUM(IIF(Country = 'CZE', 1, 0)) - SUM(IIF(Country = 'SVK', 1, 0)) FROM gasstations WHERE Segment = 'Discount'
+llmRESPONSE: debit_card_specializing: gas stations(GasStationID, Country, Segment)
+attributes: Country, Segment
+
+Qid: 1485
+DBid: debit_card_specializing
+QUESTION: How much more was customer 7 consuming in April 2013 than customer 5?
+SQL: SELECT SUM(IIF(CustomerID = 7, Consumption, 0)) - SUM(IIF(CustomerID = 5, Consumption, 0)) FROM yearmonth WHERE Date = '201304'
+llmRESPONSE: debit_card_specializing: year and month(CustomerID, Date, Consumption)
+attributes: CustomerID, Consumption, Date
+
+Qid: 1486
+DBid: debit_card_specializing
+QUESTION: Is it true that more SMEs pay in Czech koruna than in euros? If so, how many more?
+SQL: SELECT SUM(Currency = 'CZK') - SUM(Currency = 'EUR') FROM customers WHERE Segment = 'SME'
+llmRESPONSE: financial: transaction(trans_id, account_id, k_symbol), order(order_id, account_id, k_symbol)
+attributes: Currency, Segment
+
+Qid: 1512
+DBid: debit_card_specializing
+QUESTION: Which customer paid the most in 2012/8/25?
+SQL: SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' GROUP BY CustomerID ORDER BY SUM(Price) DESC LIMIT 1
+llmRESPONSE: debit_card_specializing: transactions(TransactionID, Date, CustomerID, Amount)
+attributes: CustomerID, Date, Price
