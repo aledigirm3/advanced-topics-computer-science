@@ -76,24 +76,40 @@ def get_tables_from_SQLquery(sql_query: str) -> list[str]:
     return list(clean_tables)
 
 
-def get_entry_from_llmResponse(filename: str):
+def get_entry_from_llmResponse(filename: str, withAttributes = False):
     
     with open(filename, "r", encoding="utf-8") as file:
         text = file.read()
-
-    pattern = re.findall(
-        r"Qid: (\d+)\nDBid: ([^\n]+)\nQUESTION: ([^\n]+)\nSQL: ([^\n]+)\nllmRESPONSE: ([^\n]+)", 
-        text
-    )
-    data = {
-        int(qid): {
-            "DBid": dbid.strip(),
-            "QUESTION": question.strip(),
-            "SQL": sql.strip(),
-            "llmRESPONSE": llmresp.strip(),
+    
+    if withAttributes:
+        pattern = re.findall(
+            r"Qid: (\d+)\nDBid: ([^\n]+)\nQUESTION: ([^\n]+)\nSQL: ([^\n]+)\nllmRESPONSE: ([^\n]+)\nattributes: ([^\n]+)", 
+            text
+        )
+        data = {
+            int(qid): {
+                "DBid": dbid.strip(),
+                "QUESTION": question.strip(),
+                "SQL": sql.strip(),
+                "llmRESPONSE": llmresp.strip(),
+                "attributes": att.strip()
+            }
+            for qid, dbid, question, sql, llmresp, att in pattern
         }
-        for qid, dbid, question, sql, llmresp in pattern
-    }
+    else:
+        pattern = re.findall(
+            r"Qid: (\d+)\nDBid: ([^\n]+)\nQUESTION: ([^\n]+)\nSQL: ([^\n]+)\nllmRESPONSE: ([^\n]+)", 
+            text
+        )
+        data = {
+            int(qid): {
+                "DBid": dbid.strip(),
+                "QUESTION": question.strip(),
+                "SQL": sql.strip(),
+                "llmRESPONSE": llmresp.strip(),
+            }
+            for qid, dbid, question, sql, llmresp in pattern
+        }
     
     return data
     
