@@ -9,6 +9,8 @@ from ansi_colors import *
 
 def get_db_dict(filename: str) -> Dict[str, Dict[str, list]]: # -> {database, {table_name, [col1, col2, ...]}}
 
+    db_dict = {}
+
     with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -21,10 +23,10 @@ def get_db_dict(filename: str) -> Dict[str, Dict[str, list]]: # -> {database, {t
             if table_index != -1:
                  tables_dict[db["table_names"][table_index]].append(column_name)
 
-        db_dict = {db["db_id"]: tables_dict}
-        print(db_dict)
-        print('\n\n')
+        db_dict[db["db_id"]] = tables_dict
 
+
+    return db_dict
 
 
 def get_db_dict_mapping(filename: str) -> Tuple[Dict[str, Dict[str, str]], Dict[str, Dict[str, str]]]: 
@@ -101,5 +103,6 @@ if __name__ == '__main__':
     #query = "SELECT T3.district_id FROM `order` AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN district AS T3 ON T2.district_id = T3.district_id WHERE T1.order_id = 33333"
     #print(get_db_dict_mapping(False))
 
-    get_db_dict(paths.DEV + 'dev_tables.json')
+    db_dict = get_db_dict(paths.DEV + 'dev_tables.json')
+
     
