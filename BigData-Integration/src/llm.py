@@ -10,7 +10,7 @@ env_path = current_dir / "../.env"
 load_dotenv(dotenv_path=env_path)
 #===============================================
 
-api_key = os.environ.get("MARC_API_KEY")
+api_key = os.environ.get("GROQ_API_KEY")
 client = Groq(
     api_key=api_key,
 )
