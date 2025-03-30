@@ -16,7 +16,7 @@ Qid: 79
 DBid: california_schools
 QUESTION: Between San Diego and Santa Barbara, which county offers the most number of schools that does not offer physical building? Indicate the amount.
 SQL: SELECT County, COUNT(Virtual) FROM schools WHERE (County = 'San Diego' OR County = 'Santa Barbara') AND Virtual = 'F' GROUP BY County ORDER BY COUNT(Virtual) DESC LIMIT 1
-llmRESPONSE: california_schools: schools(County, City, Virtual), Zip Code(County, city)
+llmRESPONSE: california_schools: schools(County, City, Virtual)
 attributes: County, Virtual
 
 Qid: 82
@@ -30,7 +30,7 @@ Qid: 88
 DBid: california_schools
 QUESTION: What is the administrator's email address for the school with the highest number of test takers who received SAT scores of at least 1500?Provide the name of the school.
 SQL: SELECT T2.AdmEmail1, T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode ORDER BY T1.NumGE1500 DESC LIMIT 1
-llmRESPONSE: california_schools: sat_scores(cds, NumTstTakr, sname), schools(CDSCode, School, AdmEmail1)
+llmRESPONSE: california_schools: sat scores(cds, NumTstTakr, sname), schools(CDSCode, School, AdmEmail1)
 attributes: AdmEmail1, School, cds, CDSCode, NumGE1500
 
 Qid: 96
@@ -362,12 +362,6 @@ SQL: SELECT COUNT(event_id) FROM event WHERE type = 'Meeting' AND SUBSTR(event_d
 llmRESPONSE: student_club: Event(event_date, type)
 attributes: event_id, type, event_date
 
-Qid: 1380
-DBid: student_club
-QUESTION: What is the total amount of money spent for food?
-SQL: SELECT SUM(spent) FROM budget WHERE category = 'Food'
-llmRESPONSE: financial: transaction(trans_id, account_id, date, type, operation, amount, balance, k_symbol, bank, account), order(order_id, account_id, bank_to, account_to, amount, k_symbol)
-attributes: spent, category
 
 Qid: 1483
 DBid: debit_card_specializing
