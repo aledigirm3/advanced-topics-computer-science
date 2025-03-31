@@ -70,7 +70,6 @@ def get_tables_from_SQLquery(sql_query: str) -> list[str]:
     tables = set(table_pattern.findall(sql_query))
     tables.update(join_pattern.findall(sql_query))
     
-    # Rimuovi i backtick solo se presenti
     clean_tables = {table.strip('`') for table in tables}
     
     return list(clean_tables)
