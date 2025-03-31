@@ -23,7 +23,7 @@ def database_match_eval(filename: str):
 
 
 
-def table_match_eval(filename: str):
+def table_match_eval(filename: str, needResults=False):
     
     original2name, name2original = get_db_dict_mapping(paths.DEV + 'dev_tables.json')
     
@@ -60,11 +60,15 @@ def table_match_eval(filename: str):
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0
     f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
     
+    if needResults:
+        return precision, recall, f1_score
+    
     print(f"{GREEN}PRECISION: {RESET}{precision:.2f}")
     print(f"{GREEN}RECALL: {RESET}{recall:.2f}")
     print(f"{GREEN}F1-score: {RESET}{f1_score:.2f}")
     
-def att_table_match_eval(filename: str):
+    
+def att_table_match_eval(filename: str, needResults=False):
     
     original2name, name2original = get_db_dict_mapping(paths.DEV + 'dev_tables.json')
     
@@ -81,8 +85,6 @@ def att_table_match_eval(filename: str):
     n_ist = 0
     
     for qid, entry in data.items():
-        n_ist += 1
-        print(f"{RED}{qid}{RESET}")
         truth_tables = get_tables_from_SQLquery(entry['SQL'])
         truth_attributes = entry['attributes'].split(",")
         truth_attributes =[item.strip() for item in truth_attributes]
@@ -122,24 +124,31 @@ def att_table_match_eval(filename: str):
     recall = table_tp / (table_tp + table_fn) if (table_tp + table_fn) > 0 else 0
     f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
     
+    att_precision = att_tp / (att_tp + att_fp) if (att_tp + att_fp) > 0 else 0
+    att_recall = att_tp / (att_tp + att_fn) if (att_tp + att_fn) > 0 else 0
+    att_f1_score = 2 * (att_precision * att_recall) / (att_precision + att_recall) if (att_precision + att_recall) > 0 else 0
+    
+    if needResults:
+        return precision, recall, f1_score, att_precision, att_recall, att_f1_score
+    
+    
     print(f"{CYAN}*===Table evaluation===*{RESET}")
     print(f"{GREEN}PRECISION: {RESET}{precision:.2f}")
     print(f"{GREEN}RECALL: {RESET}{recall:.2f}")
     print(f"{GREEN}F1-score: {RESET}{f1_score:.2f}")
-    print('\n')
-    precision = att_tp / (att_tp + att_fp) if (att_tp + att_fp) > 0 else 0
-    recall = att_tp / (att_tp + att_fn) if (att_tp + att_fn) > 0 else 0
-    f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
-    
-    print(f"{CYAN}*===Attributes evaluation===*{RESET}")
-    print(f"{GREEN}PRECISION: {RESET}{precision:.2f}")
-    print(f"{GREEN}RECALL: {RESET}{recall:.2f}")
-    print(f"{GREEN}F1-score: {RESET}{f1_score:.2f}")
-    print(n_ist)
+    print(f"\n{CYAN}*===Attributes evaluation===*{RESET}")
+    print(f"{GREEN}PRECISION: {RESET}{att_precision:.2f}")
+    print(f"{GREEN}RECALL: {RESET}{att_recall:.2f}")
+    print(f"{GREEN}F1-score: {RESET}{att_f1_score:.2f}")
 
 
 if __name__ == '__main__':
+    
+    # TO SEE RESULTS RUN THIS SCRIPT
+    print(f"\n{RED}Without attributes evaluation{RESET}")
+    filename = paths.LLM_RESPONSE + "match_tables.txt"
+    table_match_eval(filename)
 
+    print(f"\n{RED}Table with attributes evaluation{RESET}")
     filename = paths.LLM_RESPONSE + "att_match_tables.txt"
-
     att_table_match_eval(filename)
