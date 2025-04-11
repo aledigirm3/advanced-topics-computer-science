@@ -84,12 +84,18 @@ def embed_pair(table1: str, table2: str, embedder: Embedder):
     # Takes the first 10 lines
     for col in df1.columns:
         result1 += f'{col}:\n'
-        result1 += ', '.join(map(str, df1[col].head(10).to_list()))
+        if not df1[col].empty:
+            result1 += ', '.join(map(str, df1[col].head(10).to_list()))
+        else:
+            result1 += 'null'
         result1 += '\n'
 
     for col in df2.columns:
         result2 += f'{col}:\n'
-        result2 += ', '.join(map(str, df2[col].head(10).to_list()))
+        if not df2[col].empty:
+            result2 += ', '.join(map(str, df2[col].head(10).to_list()))
+        else:
+            result2 += 'null'
         result2 += '\n'
 
     embed1 = embedder.get_sentence_embedding(result1)
