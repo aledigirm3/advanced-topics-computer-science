@@ -42,7 +42,7 @@ if __name__ == '__main__':
     #=======hyperparameters=========
     batch_size = 16 
     num_epochs = 10
-    threshold = 0.3
+    threshold = 0.4
     #===============================
 
     filename = 'train_pairs_dataset.pkl'
