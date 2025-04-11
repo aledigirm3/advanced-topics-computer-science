@@ -15,7 +15,7 @@ print(f"Cuda version: {torch.version.cuda}")
 print(f"Torch version: {torch.__version__}\n")
 # ===========================================================================================
 
-def load_dataset(filename: str, batch_size: int):
+def load_dataset(filename: str, batch_size: int, shuffle: bool=True):
     
     with open(paths.DATASET + filename, "rb") as f:
         pairs, labels = pickle.load(f)
@@ -32,7 +32,7 @@ def load_dataset(filename: str, batch_size: int):
     input_dim = embeddings1.shape[1]
 
     dataset = TensorDataset(embeddings1, embeddings2, labels)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
     return dataloader, input_dim
 
@@ -60,6 +60,6 @@ if __name__ == '__main__':
     
     print(f"{GREEN}EVALUATION...{RESET}")
     filename = 'test_pairs_dataset.pkl'
-    dataloader, input_dim = load_dataset(filename, batch_size=1)
+    dataloader, input_dim = load_dataset(filename, batch_size=1, shuffle=False)
     evaluate(model, dataloader, threshold, device)
 
